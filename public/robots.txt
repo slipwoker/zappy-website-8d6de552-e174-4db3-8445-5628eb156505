@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alifinds-8d6de552.zappy5.app/sitemap.xml
