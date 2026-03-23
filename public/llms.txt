@@ -1,89 +1,79 @@
-# AliFinds — Generative Engine Optimization Map
-
-> An AliExpress affiliate marketing website designed to showcase and promote products from AliExpress, driving traffic through affiliate links. The site focuses on helping shoppers discover deals and products available on AliExpress while generating commission through the affiliate program.
+# Business — Generative Engine Optimization Map
 
 ---
 
 ## Pages
 
 ### בית
-https://alifinds-8d6de552.zappy5.app
+https://example.com
 מוצרים מומלצים מאליאקספרס 2024 במחירים שלא תאמין! AliFinds מביא לך את הדילים הכי שווים, המלצות קניה אונליין וקישורים ישירים לעסקאות הטובות ביותר. התחל לחסוך עכשיו!
 
 ### איך זה עובד
-https://alifinds-8d6de552.zappy5.app/how-it-works
+https://example.com/how-it-works
 רוצה לקנות חכם באליאקספרס? AliFinds מסביר בדיוק איך למצוא המלצות קניה אליאקספרס, להשתמש בקישורי השותפים ולקבל את המחירים הכי נמוכים בכל קטגוריה. פשוט, מהיר וחוסך לך כסף אמיתי!
 
 ### אודות AliFinds
-https://alifinds-8d6de552.zappy5.app/about
+https://example.com/about
 AliFinds נוצר מתוך אהבה אמיתית למציאות ולקניות חכמות. אנחנו סורקים את אליאקספרס ומביאים לך רק את מוצרים מומלצים מאליאקספרס 2024 שעומדים בסטנדרט הגבוה ביותר. הכר את הצוות שעובד בשבילך כל יום!
 
 ### צור קשר
-https://alifinds-8d6de552.zappy5.app/contact
+https://example.com/contact
 נתקלת במוצר שאתה מחפש ולא מצאת? רוצה להמליץ על דיל מטורף? צור קשר עם צוות AliFinds ונעזור לך למצוא מוצרים זולים באליאקספרס או נענה על כל שאלה. אנחנו עונים מהר ובשמחה!
 
 ### Products
-https://alifinds-8d6de552.zappy5.app/products
+https://example.com/products
 המוצרים שלנו - AliFinds
 
 ### Cart
-https://alifinds-8d6de552.zappy5.app/cart
+https://example.com/cart
 עגלת הקניות שלך
 
 ### Checkout
-https://alifinds-8d6de552.zappy5.app/checkout
+https://example.com/checkout
 תשלום
 
 ### Login
-https://alifinds-8d6de552.zappy5.app/login
+https://example.com/login
 התחברות לקוחות
 
 ### Account
-https://alifinds-8d6de552.zappy5.app/account
+https://example.com/account
 החשבון שלי
 
 ### Order Success
-https://alifinds-8d6de552.zappy5.app/order-success
+https://example.com/order-success
 תודה על ההזמנה
 
 ### Product Detail
-https://alifinds-8d6de552.zappy5.app/product/:slug
+https://example.com/product/:slug
 פרטי המוצר - AliFinds
 
 ### Category
-https://alifinds-8d6de552.zappy5.app/category/:slug
+https://example.com/category/:slug
 מוצרים - AliFinds
 
 ## Legal & Policy
 
 ### Privacy Policy
-https://alifinds-8d6de552.zappy5.app/privacy
+https://example.com/privacy
 Information about how user data is collected, stored, and protected.
 
 ### Terms & Conditions
-https://alifinds-8d6de552.zappy5.app/terms
+https://example.com/terms
 Legal terms describing service usage, rights, and policies.
 
 ### Accessibility Statement
-https://alifinds-8d6de552.zappy5.app/accessibility
+https://example.com/accessibility
 Information about WCAG compliance and accessibility features.
 
 ---
 
 # Business Context (for LLM understanding)
 
-## About AliFinds
-An AliExpress affiliate marketing website designed to showcase and promote products from AliExpress, driving traffic through affiliate links. The site focuses on helping shoppers discover deals and products available on AliExpress while generating commission through the affiliate program.
-
-## Target Audience
-קונים אונליין המחפשים מוצרים באליאקספרס
-
-## Industry
-מסחר אלקטרוני / שיווק שותפים
-
+## About Business
 ---
 
 # Additional Resources
 
-- **Sitemap**: https://alifinds-8d6de552.zappy5.app/sitemap.xml
-- **Robots.txt**: https://alifinds-8d6de552.zappy5.app/robots.txt
+- **Sitemap**: https://example.com/sitemap.xml
+- **Robots.txt**: https://example.com/robots.txt
