@@ -246,6 +246,1037 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 ;
+
+
+/* Cookie Consent */
+
+// Helper function to check cookie consent
+function hasConsentFor(category) {
+  if (typeof window.CookieConsent === 'undefined') {
+    return false; // Default to no consent if cookie consent not loaded
+  }
+  
+  return window.CookieConsent.validConsent(category);
+}
+
+// Helper function to execute code only with consent
+function withConsent(category, callback) {
+  if (hasConsentFor(category)) {
+    callback();
+  } else {
+    console.log(`[WARNING] Skipping ${category} code - no user consent`);
+  }
+}
+
+// Cookie Consent Initialization
+
+(function() {
+  'use strict';
+  
+  let initAttempts = 0;
+  const maxAttempts = 50; // 5 seconds max wait
+  
+  // Wait for DOM and vanilla-cookieconsent to be ready
+  function initCookieConsent() {
+    initAttempts++;
+    
+    
+    if (typeof window.CookieConsent === 'undefined') {
+      if (initAttempts < maxAttempts) {
+        setTimeout(initCookieConsent, 100);
+      } else {
+      }
+      return;
+    }
+
+    const cc = window.CookieConsent;
+    
+    
+    // Initialize cookie consent
+    try {
+      cc.run({
+  "autoShow": true,
+  "mode": "opt-in",
+  "revision": 0,
+  "categories": {
+    "necessary": {
+      "enabled": true,
+      "readOnly": true
+    },
+    "analytics": {
+      "enabled": false,
+      "readOnly": false,
+      "autoClear": {
+        "cookies": [
+          {
+            "name": "_ga"
+          },
+          {
+            "name": "_ga_*"
+          },
+          {
+            "name": "_gid"
+          },
+          {
+            "name": "_gat"
+          }
+        ]
+      }
+    },
+    "marketing": {
+      "enabled": false,
+      "readOnly": false,
+      "autoClear": {
+        "cookies": [
+          {
+            "name": "_fbp"
+          },
+          {
+            "name": "_fbc"
+          },
+          {
+            "name": "fr"
+          }
+        ]
+      }
+    }
+  },
+  "language": {
+    "default": "he",
+    "translations": {
+      "he": {
+        "consentModal": {
+          "title": "אנחנו משתמשים בעוגיות 🍪",
+          "description": "AliFinds משתמש בעוגיות כדי לשפר את החוויה שלך, לנתח שימוש באתר ולסייע במאמצי השיווק שלנו.",
+          "acceptAllBtn": "אשר הכל",
+          "acceptNecessaryBtn": "רק הכרחי",
+          "showPreferencesBtn": "נהל העדפות",
+          "footer": "<a href=\"#privacy-policy\">מדיניות פרטיות</a> | <a href=\"#terms-conditions\">תנאי שימוש</a>"
+        },
+        "preferencesModal": {
+          "title": "העדפות עוגיות",
+          "acceptAllBtn": "אשר הכל",
+          "acceptNecessaryBtn": "רק הכרחי",
+          "savePreferencesBtn": "שמור העדפות",
+          "closeIconLabel": "סגור",
+          "sections": [
+            {
+              "title": "עוגיות חיוניות",
+              "description": "עוגיות אלה הכרחיות לתפקוד האתר ולא ניתן להשבית אותן.",
+              "linkedCategory": "necessary"
+            },
+            {
+              "title": "עוגיות ניתוח",
+              "description": "עוגיות אלה עוזרות לנו להבין איך המבקרים מתקשרים עם האתר שלנו.",
+              "linkedCategory": "analytics"
+            },
+            {
+              "title": "עוגיות שיווקיות",
+              "description": "עוגיות אלה משמשות להצגת פרסומות מותאמות אישית.",
+              "linkedCategory": "marketing"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "guiOptions": {
+    "consentModal": {
+      "layout": "box",
+      "position": "bottom right",
+      "equalWeightButtons": true,
+      "flipButtons": false
+    },
+    "preferencesModal": {
+      "layout": "box",
+      "equalWeightButtons": true,
+      "flipButtons": false
+    }
+  }
+});
+      
+      // Google Consent Mode v2 integration
+      // Update consent state based on accepted cookie categories
+      function updateGoogleConsentMode() {
+        if (typeof gtag !== 'function') {
+          // Define gtag if not already defined (needed for consent updates)
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function(){dataLayer.push(arguments);};
+        }
+        
+        var analyticsAccepted = cc.acceptedCategory('analytics');
+        var marketingAccepted = cc.acceptedCategory('marketing');
+        
+        gtag('consent', 'update', {
+          'analytics_storage': analyticsAccepted ? 'granted' : 'denied',
+          'ad_storage': marketingAccepted ? 'granted' : 'denied',
+          'ad_user_data': marketingAccepted ? 'granted' : 'denied',
+          'ad_personalization': marketingAccepted ? 'granted' : 'denied'
+        });
+      }
+      
+      // Update consent on initial load (if user previously accepted)
+      updateGoogleConsentMode();
+      
+      // Handle consent changes via onChange callback
+      if (typeof cc.onChange === 'function') {
+        cc.onChange(function(cookie, changed_preferences) {
+          updateGoogleConsentMode();
+        });
+      }
+
+      // Note: Cookie Preferences button removed per marketing guidelines
+      // Footer should be clean and minimal - users can manage cookies via banner
+    } catch (error) {
+    }
+  }
+
+  // Initialize when DOM is ready - multiple approaches for reliability
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCookieConsent);
+    // Backup timeout in case DOMContentLoaded doesn't fire
+    setTimeout(initCookieConsent, 1000);
+  } else if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    initCookieConsent();
+  } else {
+    // Fallback - try after a short delay
+    setTimeout(initCookieConsent, 500);
+  }
+  
+  // Additional fallback - try after page load
+  if (typeof window !== 'undefined') {
+    if (window.addEventListener) {
+      window.addEventListener('load', initCookieConsent, { once: true });
+    }
+  }
+})();
+
+/* Accessibility Features */
+
+/* Mickidum Accessibility Toolbar Initialization - Zappy Style */
+
+window.onload = function() {
+    
+    try {
+        window.micAccessTool = new MicAccessTool({
+            buttonPosition: 'left', // Position on left side
+            forceLang: 'he-IL', // Force language
+            icon: {
+                position: {
+                    bottom: { size: 50, units: 'px' },
+                    left: { size: 20, units: 'px' },
+                    type: 'fixed'
+                },
+                backgroundColor: 'transparent', // Transparent to allow CSS styling
+                color: 'transparent', // Let CSS handle coloring
+                img: 'accessible',
+                circular: false // Square button for consistent styling
+            },
+            menu: {
+                dimensions: {
+                    width: { size: 300, units: 'px' },
+                    height: { size: 'auto', units: 'px' }
+                }
+            }
+        });
+        
+    } catch (error) {
+    }
+    
+    // Keyboard shortcut handler: ALT+A (Option+A on Mac) to toggle accessibility widget visibility (desktop only)
+    document.addEventListener('keydown', function(event) {
+        // Check if ALT+A is pressed (ALT on Windows/Linux, Option on Mac)
+        var isAltOrOption = event.altKey;
+        // Use event.code for reliable physical key detection (works regardless of Option key character output)
+        var isAKey = event.code === 'KeyA' || event.keyCode === 65 || event.which === 65 || 
+                      (event.key && (event.key.toLowerCase() === 'a' || event.key === 'å' || event.key === 'Å'));
+        
+        if (isAltOrOption && isAKey) {
+            // Only work on desktop (screen width > 768px)
+            if (window.innerWidth > 768) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // Toggle visibility class on body
+                var isVisible = document.body.classList.contains('accessibility-widget-visible');
+                
+                if (isVisible) {
+                    // Hide the widget
+                    document.body.classList.remove('accessibility-widget-visible');
+                } else {
+                    // Show the widget
+                    document.body.classList.add('accessibility-widget-visible');
+                    
+                    // After a short delay, click the button to open the menu
+                    setTimeout(function() {
+                        var accessButton = document.getElementById('mic-access-tool-general-button');
+                        if (accessButton) {
+                            accessButton.click();
+                        }
+                    }, 200);
+                }
+            }
+        }
+    }, true);
+};
+
+
+    // Enhanced contact form handling with Elastic Email integration
+    // API URL: https://api.zappy5.com
+    (function() {
+        // Check if contact form handler is already loaded
+        if (window.zappyContactFormLoaded) {
+            console.log('📧 Zappy contact form already loaded');
+            return;
+        }
+        window.zappyContactFormLoaded = true;
+        
+        // Wait for DOM to be ready before initializing
+        function initContactForm() {
+            console.log('📧 Zappy: Initializing contact form handler...');
+            
+            // Find contact form with multiple selector fallbacks
+            const contactForm = document.querySelector('.contact-form') || 
+                               document.querySelector('form[action*="contact"]') ||
+                               document.querySelector('form#contact') ||
+                               document.querySelector('form#contactForm') ||
+                               document.getElementById('contactForm') ||
+                               document.querySelector('section.contact form') ||
+                               document.querySelector('section#contact form') ||
+                               document.querySelector('form');
+            
+            if (!contactForm) {
+                console.log('⚠️ Zappy: No contact form found on page');
+                return;
+            }
+            
+            console.log('✅ Zappy: Contact form found:', contactForm.className || contactForm.id || 'unnamed form');
+            
+            // Remove any existing submit handlers by cloning the form element
+            const newContactForm = contactForm.cloneNode(true);
+            contactForm.parentNode.replaceChild(newContactForm, contactForm);
+            
+            // Now add our handler to the clean form
+            newContactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data with multi-value support (checkboxes, multi-selects)
+            const formData = new FormData(this);
+            const data = {};
+            for (const [key, value] of formData.entries()) {
+                if (data[key] !== undefined) {
+                    if (Array.isArray(data[key])) data[key].push(value);
+                    else data[key] = [data[key], value];
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Smart name resolution: name > firstName+lastName > email
+            const _coreNameFields = ['name','firstName','first_name','fname','lastName','last_name','lname'];
+            const _coreEmailFields = ['email','emailAddress','mail','e-mail'];
+            const _corePhoneFields = ['phone','tel','telephone','mobile','cellphone'];
+            const _coreMsgFields = ['message','msg','comments','comment','description','details','notes','body','text','inquiry'];
+            const _coreSubjectFields = ['subject','topic','regarding','re'];
+            const _allCoreFields = [].concat(_coreNameFields, _coreEmailFields, _corePhoneFields, _coreMsgFields, _coreSubjectFields);
+            
+            const name = (data.name || '').trim()
+                || [data.firstName || data.first_name || data.fname || '', data.lastName || data.last_name || data.lname || ''].filter(Boolean).join(' ').trim()
+                || (data.email || data.emailAddress || data.mail || '').trim()
+                || 'Anonymous';
+            
+            const email = (data.email || data.emailAddress || data.mail || data['e-mail'] || '').trim();
+            
+            const phone = data.phone || data.tel || data.telephone || data.mobile || data.cellphone || null;
+            
+            const subject = data.subject || data.topic || data.regarding || data.re || 'Contact Form Submission';
+            
+            // Smart message resolution: use message field, or build summary from all non-core fields
+            let message = (data.message || data.msg || data.comments || data.comment || data.description || data.details || data.notes || data.body || data.text || data.inquiry || '').trim();
+            if (!message) {
+                const extraEntries = Object.entries(data).filter(function(e) { return !_allCoreFields.includes(e[0]); });
+                if (extraEntries.length > 0) {
+                    message = extraEntries.map(function(e) {
+                        const label = e[0].replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim();
+                        const val = Array.isArray(e[1]) ? e[1].join(', ') : e[1];
+                        return label + ': ' + val;
+                    }).join('\n');
+                } else {
+                    message = 'Form submission from ' + window.location.pathname;
+                }
+            }
+            
+            // Collect extra fields (anything not in the core set)
+            const extraFields = {};
+            for (const [key, value] of Object.entries(data)) {
+                if (!_allCoreFields.includes(key) && value !== '' && value !== null && value !== undefined) {
+                    extraFields[key] = value;
+                }
+            }
+            
+            if (!email) {
+                console.error('❌ Validation failed: no email found in form data');
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Email validation
+            if (!isValidEmail(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            // Get submit button and show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            // Add loading animation
+            submitBtn.classList.add('loading');
+            
+            try {
+                // Send to Zappy email API - prefer ZAPPY_API_BASE (set per-deployment) over build-time URL
+                const apiUrl = (window.ZAPPY_API_BASE || 'https://api.zappy5.com').replace(/\/$/, '');
+                const endpoint = apiUrl + '/api/email/contact-form';
+                
+                // Get current page path for thank you page lookup
+                // In preview mode, use ZAPPY_CONFIG.currentPagePath; otherwise use pathname
+                let currentPagePath = window.location.pathname;
+                if (window.ZAPPY_CONFIG && window.ZAPPY_CONFIG.currentPagePath) {
+                    currentPagePath = window.ZAPPY_CONFIG.currentPagePath;
+                } else {
+                    // Try to extract page from URL query param (fullscreen preview mode)
+                    try {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const pageParam = urlParams.get('page');
+                        if (pageParam) currentPagePath = pageParam;
+                    } catch (e) {}
+                }
+                
+                const payload = {
+                    websiteId: '8d6de552-e174-4db3-8445-5628eb156505',
+                    name: name,
+                    email: email,
+                    subject: subject,
+                    message: message,
+                    phone: phone,
+                    currentPagePath: currentPagePath
+                };
+                if (Object.keys(extraFields).length > 0) {
+                    payload.extraFields = extraFields;
+                }
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Check if there's a thank you page to redirect to
+                    if (result.thankYouPagePath && result.ticketNumber) {
+                        console.log('🎁 Redirecting to thank you page:', result.thankYouPagePath);
+                        
+                        // Build the redirect URL based on the current environment
+                        let thankYouUrl;
+                        const ticketParam = 'ticket=' + encodeURIComponent(result.ticketNumber);
+                        
+                        // Check if we're in preview mode (URL contains /preview/ or /preview-fullscreen/)
+                        const isPreviewMode = window.location.pathname.includes('/preview');
+                        
+                        if (isPreviewMode && window.ZAPPY_CONFIG) {
+                            // In preview mode, use the preview URL format
+                            const websiteId = window.ZAPPY_CONFIG.websiteId || '8d6de552-e174-4db3-8445-5628eb156505';
+                            const authToken = window.ZAPPY_CONFIG.authToken;
+                            const baseUrl = window.location.origin;
+                            const previewType = window.location.pathname.includes('fullscreen') ? 'preview-fullscreen' : 'preview';
+                            
+                            thankYouUrl = baseUrl + '/api/website/' + previewType + '/' + websiteId + '?page=' + encodeURIComponent(result.thankYouPagePath) + '&' + ticketParam;
+                            if (authToken) {
+                                thankYouUrl += '&auth_token=' + encodeURIComponent(authToken);
+                            }
+                        } else {
+                            // In deployed/production mode, navigate directly to the page
+                            thankYouUrl = result.thankYouPagePath + '?' + ticketParam;
+                        }
+                        
+                        console.log('📍 Navigating to:', thankYouUrl);
+                        window.location.href = thankYouUrl;
+                        return; // Don't show notification since we're redirecting
+                    }
+                    
+                    // No thank you page - show standard notification
+                    showNotification(result.message || 'Thank you for your message! We\'ll get back to you soon.', 'success');
+                    
+                    // Reset form
+                    this.reset();
+                    
+                    // Optional: Show additional success UI
+                    showSuccessModal();
+                } else {
+                    // Error from server
+                    console.error('❌ Server returned error:', result);
+                    showNotification(result.error || 'Failed to send message. Please try again.', 'error');
+                }
+                
+            } catch (error) {
+                console.error('❌ Network error:', error);
+                console.error('Failed to connect to:', 'https://api.zappy5.com/api/email/contact-form');
+                
+                // Fallback: Show error message and provide alternative contact info
+                showNotification(
+                    'Unable to send message right now. Please try again later or contact us directly.',
+                    'error'
+                );
+                
+                // Show fallback contact info
+                showFallbackContact();
+            } finally {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }
+        });
+        
+        // Email validation helper
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.zappy-notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `zappy-notification zappy-notification--${type}`;
+            notification.innerHTML = `
+            <div class="zappy-notification__content">
+                <span class="zappy-notification__icon">
+                    ${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}
+                </span>
+                <span class="zappy-notification__message">${message}</span>
+                <button class="zappy-notification__close" onclick="this.parentElement.parentElement.remove()">×</button>
+            </div>
+            `;
+            
+            // Add styles if not already present
+            if (!document.querySelector('#zappy-notification-styles')) {
+                const styles = document.createElement('style');
+            styles.id = 'zappy-notification-styles';
+            styles.textContent = `
+                .zappy-notification {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    max-width: 400px;
+                    padding: 16px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease-out;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                }
+                
+                .zappy-notification--success {
+                    background-color: #d4edda;
+                    border: 1px solid #c3e6cb;
+                    color: #155724;
+                }
+                
+                .zappy-notification--error {
+                    background-color: #f8d7da;
+                    border: 1px solid #f5c6cb;
+                    color: #721c24;
+                }
+                
+                .zappy-notification--info {
+                    background-color: #d1ecf1;
+                    border: 1px solid #bee5eb;
+                    color: #0c5460;
+                }
+                
+                .zappy-notification__content {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                
+                .zappy-notification__icon {
+                    font-size: 18px;
+                    flex-shrink: 0;
+                }
+                
+                .zappy-notification__message {
+                    flex: 1;
+                    font-size: 14px;
+                    line-height: 1.4;
+                }
+                
+                .zappy-notification__close {
+                    background: none;
+                    border: none;
+                    font-size: 20px;
+                    cursor: pointer;
+                    padding: 0;
+                    width: 24px;
+                    height: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    opacity: 0.7;
+                }
+                
+                .zappy-notification__close:hover {
+                    opacity: 1;
+                }
+                
+                @keyframes slideInRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                .loading {
+                    position: relative;
+                    pointer-events: none;
+                }
+                
+                .loading::after {
+                    content: '';
+                    position: absolute;
+                    width: 16px;
+                    height: 16px;
+                    margin: auto;
+                    border: 2px solid transparent;
+                    border-top-color: currentColor;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                }
+                
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        // Add to page
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 5 seconds for success, 8 seconds for errors
+        const timeout = type === 'error' ? 8000 : 5000;
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, timeout);
+    }
+    
+    // Success modal for enhanced UX
+    function showSuccessModal() {
+        const modal = document.createElement('div');
+        modal.className = 'zappy-success-modal';
+        modal.innerHTML = `
+            <div class="zappy-success-modal__backdrop" onclick="this.parentElement.remove()">
+                <div class="zappy-success-modal__content" onclick="event.stopPropagation()">
+                    <div class="zappy-success-modal__icon">🎉</div>
+                    <h3>Message Sent Successfully!</h3>
+                    <p>Thank you for reaching out. We've received your message and will get back to you as soon as possible.</p>
+                    <button onclick="this.closest('.zappy-success-modal').remove()" class="zappy-success-modal__button">
+                        Got it!
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Add modal styles
+        if (!document.querySelector('#zappy-modal-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'zappy-modal-styles';
+            styles.textContent = `
+                .zappy-success-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 10001;
+                    animation: fadeIn 0.3s ease-out;
+                }
+                
+                .zappy-success-modal__backdrop {
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                }
+                
+                .zappy-success-modal__content {
+                    background: white;
+                    padding: 40px;
+                    border-radius: 12px;
+                    text-align: center;
+                    max-width: 400px;
+                    width: 100%;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                    animation: slideUp 0.3s ease-out;
+                }
+                
+                .zappy-success-modal__icon {
+                    font-size: 48px;
+                    margin-bottom: 20px;
+                }
+                
+                .zappy-success-modal__content h3 {
+                    margin: 0 0 15px 0;
+                    color: #333;
+                    font-size: 24px;
+                }
+                
+                .zappy-success-modal__content p {
+                    margin: 0 0 25px 0;
+                    color: #666;
+                    line-height: 1.5;
+                }
+                
+                .zappy-success-modal__button {
+                    background: #007bff;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 6px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: background-color 0.2s;
+                }
+                
+                .zappy-success-modal__button:hover {
+                    background: #0056b3;
+                }
+                
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                
+                @keyframes slideUp {
+                    from { transform: translateY(30px); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        document.body.appendChild(modal);
+        
+        // Auto-close after 5 seconds
+        setTimeout(() => {
+            if (modal.parentElement) {
+                modal.remove();
+            }
+        }, 5000);
+    }
+    
+    // Fallback contact information
+    function showFallbackContact() {
+        const fallback = document.createElement('div');
+        fallback.className = 'zappy-fallback-contact';
+        fallback.innerHTML = `
+            <div class="zappy-fallback-contact__content">
+                <h4>Alternative Contact Methods</h4>
+                <p>If you're having trouble sending your message, you can also reach us at:</p>
+                <div class="zappy-fallback-contact__methods">
+                    <a href="mailto:support@zappy5.com?subject=Contact Form Issue" class="zappy-fallback-contact__method">
+                        📧 support@zappy5.com
+                    </a>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" class="zappy-fallback-contact__close">
+                    Close
+                </button>
+            </div>
+        `;
+        
+        // Add fallback styles
+        if (!document.querySelector('#zappy-fallback-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'zappy-fallback-styles';
+            styles.textContent = `
+                .zappy-fallback-contact {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    max-width: 350px;
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    animation: slideInUp 0.3s ease-out;
+                }
+                
+                .zappy-fallback-contact__content {
+                    padding: 20px;
+                }
+                
+                .zappy-fallback-contact__content h4 {
+                    margin: 0 0 10px 0;
+                    color: #333;
+                    font-size: 16px;
+                }
+                
+                .zappy-fallback-contact__content p {
+                    margin: 0 0 15px 0;
+                    color: #666;
+                    font-size: 14px;
+                    line-height: 1.4;
+                }
+                
+                .zappy-fallback-contact__methods {
+                    margin-bottom: 15px;
+                }
+                
+                .zappy-fallback-contact__method {
+                    display: block;
+                    padding: 8px 12px;
+                    background: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 4px;
+                    text-decoration: none;
+                    color: #495057;
+                    font-size: 14px;
+                    transition: background-color 0.2s;
+                }
+                
+                .zappy-fallback-contact__method:hover {
+                    background: #e9ecef;
+                }
+                
+                .zappy-fallback-contact__close {
+                    background: #6c757d;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    cursor: pointer;
+                    float: right;
+                }
+                
+                @keyframes slideInUp {
+                    from {
+                        transform: translateY(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        document.body.appendChild(fallback);
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (fallback.parentElement) {
+                fallback.remove();
+            }
+        }, 10000);
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // 🍔 MOBILE MENU TOGGLE HANDLER
+        // ═══════════════════════════════════════════════════════════════
+        (function initMobileMenu() {
+            const mobileToggle = document.getElementById('mobileToggle') || 
+                               document.querySelector('.mobile-toggle') || 
+                               document.querySelector('.hamburger');
+            const navMenu = document.getElementById('navMenu') || 
+                          document.querySelector('.nav-menu') ||
+                          document.querySelector('.navbar-menu');
+            
+            if (mobileToggle && navMenu) {
+                
+                // Toggle menu on button click
+                mobileToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const hamburgerIcon = this.querySelector('.hamburger-icon');
+                    const closeIcon = this.querySelector('.close-icon');
+                    const isActive = this.classList.contains('active');
+                    
+                    if (isActive) {
+                        // Show hamburger, hide X
+                        if (hamburgerIcon) hamburgerIcon.style.display = 'block';
+                        if (closeIcon) closeIcon.style.display = 'none';
+                        this.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    } else {
+                        // Show X, hide hamburger  
+                        if (hamburgerIcon) hamburgerIcon.style.display = 'none';
+                        if (closeIcon) closeIcon.style.display = 'block';
+                        this.classList.add('active');
+                        navMenu.classList.add('active');
+                        document.body.style.overflow = 'hidden'; // Prevent scroll when menu open
+                    }
+                });
+                
+                // Close menu when clicking a nav link
+                const navLinks = navMenu.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+                        const closeIcon = mobileToggle.querySelector('.close-icon');
+                        if (hamburgerIcon) hamburgerIcon.style.display = 'block';
+                        if (closeIcon) closeIcon.style.display = 'none';
+                        mobileToggle.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (navMenu.classList.contains('active') && 
+                        !navMenu.contains(e.target) && 
+                        !mobileToggle.contains(e.target)) {
+                        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+                        const closeIcon = mobileToggle.querySelector('.close-icon');
+                        if (hamburgerIcon) hamburgerIcon.style.display = 'block';
+                        if (closeIcon) closeIcon.style.display = 'none';
+                        mobileToggle.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+                
+                // Handle escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+                        const closeIcon = mobileToggle.querySelector('.close-icon');
+                        if (hamburgerIcon) hamburgerIcon.style.display = 'block';
+                        if (closeIcon) closeIcon.style.display = 'none';
+                        mobileToggle.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+                
+                // Phone header button functionality
+                const phoneHeaderBtn = document.querySelector('.phone-header-btn');
+                if (phoneHeaderBtn) {
+                    phoneHeaderBtn.addEventListener('click', function() {
+                        // Dynamically get phone number from existing tel: links on the page
+                        // This ensures the phone button uses the same number as other phone links
+                        // Falls back to [business_phone] placeholder which businessInfoUpdater can replace
+                        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+                        const phoneNumber = phoneLinks.length > 0 
+                            ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+                            : '[business_phone]';
+                        window.location.href = 'tel:' + phoneNumber;
+                    });
+                }
+            }
+        })();
+        
+        // ═══════════════════════════════════════════════════════════════
+        // 🔗 DISABLE SOCIAL MEDIA LINKS WITH PLACEHOLDERS
+        // ═══════════════════════════════════════════════════════════════
+        (function disablePlaceholderLinks() {
+            // List of social media placeholders to check for (both old and new formats)
+            const socialPlaceholders = [
+                // New format (handle placeholders within URLs)
+                '[facebook_handle]',
+                '[instagram_handle]',
+                '[whatsapp_handle]',
+                '[twitter_handle]',
+                '[linkedin_handle]',
+                '[youtube_handle]',
+                '[tiktok_handle]',
+                '[pinterest_handle]',
+                // Old format (full URL placeholders)
+                '[social_facebook]',
+                '[social instagram]',
+                '[social_instagram]',
+                '[social whatsapp]',
+                '[social_whatsapp]',
+                '[social_twitter]',
+                '[social_linkedin]',
+                '[social_youtube]',
+                '[social_tiktok]',
+                '[social_pinterest]'
+            ];
+            
+            // Find all links that might contain placeholders
+            const allLinks = document.querySelectorAll('a[href]');
+            
+            allLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                
+                // Check if href contains any placeholder
+                const hasPlaceholder = socialPlaceholders.some(placeholder => 
+                    href && href.includes(placeholder)
+                );
+                
+                if (hasPlaceholder) {
+                    // Prevent navigation
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    });
+                    
+                    // Add visual indication that link is disabled
+                    link.style.cursor = 'not-allowed';
+                    link.style.opacity = '0.6';
+                    link.setAttribute('aria-disabled', 'true');
+                    link.setAttribute('title', 'Social media link not configured');
+                    
+                    // Remove target="_blank" to prevent opening empty tabs
+                    link.removeAttribute('target');
+                    link.removeAttribute('rel');
+                }
+            });
+        })();
+        } // End of initContactForm
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initContactForm);
+        } else {
+            // DOM is already ready, initialize immediately
+            initContactForm();
+        }
+    })(); // End of IIFE
+    
+;
 /* ==ZAPPY E-COMMERCE JS START== */
 // E-commerce functionality
 (function() {
@@ -1219,46 +2250,51 @@ function stripHtmlToText(html) {
       var pricePerUnitHtml = getPricePerUnitHtml(p);
       var priceHtml = showPrice ? '<div class="price">' + displayPrice + '</div>' + pricePerUnitHtml : '';
       
-      var favBtnHtml = '<button class="card-favorite-btn" data-product-id="' + p.id + '" onclick="event.preventDefault(); event.stopPropagation(); toggleCardFavorite(this, \'' + p.id + '\')" title="שמור למועדפים"><svg class="heart-outline" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M14.7917 0.833C12.705 0.833 10.811 2.376 10 4.462C9.189 2.375 7.295 0.833 5.208 0.833C2.337 0.833 0 3.17 0 6.042C0 11.675 8.128 17.767 9.758 18.93L10 19.104L10.243 18.93C11.873 17.767 20 11.674 20 6.042C20 3.17 17.663 0.833 14.792 0.833ZM10 18.078C5.716 14.965 0.833 10.019 0.833 6.042C0.833 3.629 2.796 1.667 5.208 1.667C7.498 1.667 9.583 4.05 9.583 6.667H10.417C10.417 4.05 12.502 1.667 14.792 1.667C17.204 1.667 19.167 3.629 19.167 6.042C19.167 10.019 14.284 14.965 10 18.078Z" fill="currentColor"/></svg><svg class="heart-filled" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20"><path d="M14.7917 0.833C12.705 0.833 10.811 2.376 10 4.462C9.189 2.375 7.295 0.833 5.208 0.833C2.337 0.833 0 3.17 0 6.042C0 11.675 8.128 17.767 9.758 18.93L10 19.104L10.243 18.93C11.873 17.767 20 11.674 20 6.042C20 3.17 17.663 0.833 14.792 0.833Z" fill="#e74c3c"/></svg></button>';
+      var favBtnHtml = isCatalogMode ? '' : '<button type="button" class="card-favorite-btn" data-product-id="' + p.id + '" onclick="event.preventDefault(); event.stopPropagation(); toggleCardFavorite(this, \'' + p.id + '\')" title="שמור למועדפים" aria-pressed="false"><svg class="heart-outline" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M14.7917 0.833C12.705 0.833 10.811 2.376 10 4.462C9.189 2.375 7.295 0.833 5.208 0.833C2.337 0.833 0 3.17 0 6.042C0 11.675 8.128 17.767 9.758 18.93L10 19.104L10.243 18.93C11.873 17.767 20 11.674 20 6.042C20 3.17 17.663 0.833 14.792 0.833ZM10 18.078C5.716 14.965 0.833 10.019 0.833 6.042C0.833 3.629 2.796 1.667 5.208 1.667C7.498 1.667 9.583 4.05 9.583 6.667H10.417C10.417 4.05 12.502 1.667 14.792 1.667C17.204 1.667 19.167 3.629 19.167 6.042C19.167 10.019 14.284 14.965 10 18.078Z" fill="currentColor"/></svg><svg class="heart-filled" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20"><path d="M14.7917 0.833C12.705 0.833 10.811 2.376 10 4.462C9.189 2.375 7.295 0.833 5.208 0.833C2.337 0.833 0 3.17 0 6.042C0 11.675 8.128 17.767 9.758 18.93L10 19.104L10.243 18.93C11.873 17.767 20 11.674 20 6.042C20 3.17 17.663 0.833 14.792 0.833Z" fill="#e74c3c"/></svg></button>';
+      var productHref = '/product/' + (p.slug || p.id);
+      var productCardMediaHtml = '<div class="product-card-media"><a href="' + productHref + '" class="product-card-image-link">' + imageHtml + '</a>' + tagsHtml + favBtnHtml + '</div>';
 
       if (productLayout === 'compact') {
-        cardContent = tagsHtml +
-          '<a href="/product/' + (p.slug || p.id) + '" class="product-card-link">' +
-            imageHtml +
-            '<div class="card-content">' +
-              '<h3>' + p.name + '</h3>' +
-              priceHtml +
-            '</div>' +
-          '</a>' +
-          favBtnHtml;
+        cardContent =
+          '<div class="product-card-inner">' +
+            productCardMediaHtml +
+            '<a href="' + productHref + '" class="product-card-body-link">' +
+              '<div class="card-content">' +
+                '<h3>' + p.name + '</h3>' +
+                priceHtml +
+              '</div>' +
+            '</a>' +
+          '</div>';
       } else if (productLayout === 'detailed') {
         var detailedDesc = stripHtmlToText(p.description || '');
         var actionButton = isCatalogMode
-          ? '<a href="/product/' + (p.slug || p.id) + '" class="add-to-cart view-details-btn">' + localizedViewDetails + '</a>'
+          ? '<a href="' + productHref + '" class="add-to-cart view-details-btn">' + localizedViewDetails + '</a>'
           : '<button class="add-to-cart" onclick="event.stopPropagation(); window.zappyHandleAddToCart(' + JSON.stringify(p).replace(/"/g, '&quot;') + ')">' + localizedAddToCart + '</button>';
-        cardContent = tagsHtml +
-          '<a href="/product/' + (p.slug || p.id) + '" class="product-card-link">' +
-            imageHtml +
-            '<div class="card-content">' +
-              '<h3>' + p.name + '</h3>' +
-              '<p>' + detailedDesc + '</p>' +
-              priceHtml +
-            '</div>' +
-          '</a>' +
-          actionButton +
-          favBtnHtml;
+        cardContent =
+          '<div class="product-card-inner">' +
+            productCardMediaHtml +
+            '<a href="' + productHref + '" class="product-card-body-link">' +
+              '<div class="card-content">' +
+                '<h3>' + p.name + '</h3>' +
+                '<p>' + detailedDesc + '</p>' +
+                priceHtml +
+              '</div>' +
+            '</a>' +
+          '</div>' +
+          actionButton;
       } else {
         var standardDesc = stripHtmlToText(p.description || '');
-        cardContent = tagsHtml +
-          '<a href="/product/' + (p.slug || p.id) + '" class="product-card-link">' +
-            imageHtml +
-            '<div class="card-content">' +
-              '<h3>' + p.name + '</h3>' +
-              '<p>' + standardDesc + '</p>' +
-              priceHtml +
-            '</div>' +
-          '</a>' +
-          favBtnHtml;
+        cardContent =
+          '<div class="product-card-inner">' +
+            productCardMediaHtml +
+            '<a href="' + productHref + '" class="product-card-body-link">' +
+              '<div class="card-content">' +
+                '<h3>' + p.name + '</h3>' +
+                '<p>' + standardDesc + '</p>' +
+                priceHtml +
+              '</div>' +
+            '</a>' +
+          '</div>';
       }
       
       return '<div class="product-card ' + productLayout + '" data-product-id="' + p.id + '">' + cardContent + '</div>';
@@ -1269,6 +2305,48 @@ function stripHtmlToText(html) {
     // Legacy filter buttons removed - sidebar filters handle all filtering
   }
   
+  window.getLegacyColorSwatchHex = function getLegacyColorSwatchHex(colorValue) {
+    var bgColor = String(colorValue || '').trim();
+    if (!/^#[0-9A-Fa-f]{3,8}$/.test(bgColor)) {
+      var lc = bgColor.toLowerCase();
+      var _clr = {'dark grey':'#555','dark gray':'#555','light grey':'#d3d3d3','light gray':'#d3d3d3','light blue':'lightblue','dark blue':'darkblue','light green':'lightgreen','dark green':'darkgreen','dark red':'darkred','light pink':'lightpink','dark orange':'darkorange','sky blue':'skyblue','royal blue':'royalblue','navy blue':'navy','forest green':'forestgreen','olive green':'olivedrab','sea green':'seagreen','hot pink':'hotpink','deep pink':'deeppink','dark violet':'darkviolet','slate grey':'slategrey','slate gray':'slategray','dim grey':'dimgrey','dim gray':'dimgray','steel blue':'steelblue','pale green':'palegreen','off white':'#f5f5f0','burgundy':'#800020','charcoal':'#36454f','champagne':'#f7e7ce','sand':'#c2b280','taupe':'#483c32','wine':'#722f37','rust':'#b7410e','sage':'#bcb88a','mint':'#98ff98','peach':'#ffcba4','cream':'#fffdd0','mauve':'#e0b0ff'};
+      bgColor = _clr[lc] || lc;
+    }
+    if (typeof CSS !== 'undefined' && CSS && typeof CSS.supports === 'function' && !CSS.supports('color', bgColor)) {
+      return '#94a3b8';
+    }
+    return bgColor;
+  };
+
+  window.getConfiguredColorSwatchHex = function getConfiguredColorSwatchHex(source, attrKey, colorValue) {
+    if (!colorValue) return '';
+    if (/^#[0-9A-Fa-f]{3,8}$/.test(String(colorValue).trim())) return String(colorValue).trim();
+
+    var variantConfig = source && (source.variant_config || source.variantConfig);
+    if (typeof variantConfig === 'string') {
+      try { variantConfig = JSON.parse(variantConfig); } catch (e) { variantConfig = null; }
+    }
+    var selections = variantConfig && variantConfig.selections && typeof variantConfig.selections === 'object'
+      ? variantConfig.selections
+      : null;
+    if (selections) {
+      var selectionKey = Object.keys(selections).find(function(key) {
+        return String(key).toLowerCase() === String(attrKey || '').toLowerCase();
+      });
+      var values = selectionKey && Array.isArray(selections[selectionKey] && selections[selectionKey].values)
+        ? selections[selectionKey].values
+        : [];
+      var normalizedValue = String(colorValue).trim().replace(/s+/g, ' ').toLowerCase();
+      var match = values.find(function(value) {
+        var label = typeof value === 'string' ? value : value && value.label;
+        return label && String(label).trim().replace(/s+/g, ' ').toLowerCase() === normalizedValue && value && value.hex;
+      });
+      if (match && match.hex) return match.hex;
+    }
+
+    return window.getLegacyColorSwatchHex(colorValue);
+  };
+
   // Render cart drawer (slide-out panel)
   function renderCartDrawer() {
     const drawerItems = document.getElementById('cart-drawer-items');
@@ -1292,19 +2370,19 @@ function stripHtmlToText(html) {
         var parts = [];
         Object.entries(item.selectedVariant.attributes).forEach(function(entry) {
           var key = entry[0], value = entry[1];
+          var displayValue =
+            item.selectedVariant.attributes_display &&
+            Object.prototype.hasOwnProperty.call(item.selectedVariant.attributes_display, key)
+              ? item.selectedVariant.attributes_display[key]
+              : value;
           if (value) {
             var label = attrLabels[key.toLowerCase()] || key;
-            var isColor = key.toLowerCase() === 'color';
+            var isColor = key.toLowerCase() === 'color' || key.toLowerCase().includes('color');
             if (isColor) {
-              var bgColor = value;
-              if (!/^#[0-9A-Fa-f]{3,6}$/.test(value)) {
-                var lc = value.toLowerCase();
-                var _clr = {'dark grey':'#555','dark gray':'#555','light grey':'#d3d3d3','light gray':'#d3d3d3','light blue':'lightblue','dark blue':'darkblue','light green':'lightgreen','dark green':'darkgreen','dark red':'darkred','light pink':'lightpink','dark orange':'darkorange','sky blue':'skyblue','royal blue':'royalblue','navy blue':'navy','forest green':'forestgreen','olive green':'olivedrab','hot pink':'hotpink','deep pink':'deeppink','dark violet':'darkviolet','slate grey':'slategrey','slate gray':'slategray','dim grey':'dimgrey','dim gray':'dimgray','off white':'#f5f5f0','burgundy':'#800020','charcoal':'#36454f','champagne':'#f7e7ce','sand':'#c2b280','taupe':'#483c32','wine':'#722f37','rust':'#b7410e','sage':'#bcb88a','mint':'#98ff98','peach':'#ffcba4','cream':'#fffdd0','mauve':'#e0b0ff'};
-                bgColor = _clr[lc] || lc;
-              }
-              parts.push('<span class="cart-item-attr"><span class="cart-item-attr-label">' + label + ':</span> <span class="cart-item-color-swatch" title="' + value + '" style="display:inline-block;width:14px;height:14px;border-radius:50%;background-color:' + bgColor + ';border:1px solid rgba(0,0,0,0.15);vertical-align:middle;margin-' + (document.documentElement.dir === 'rtl' ? 'right' : 'left') + ':4px;"></span></span>');
+              var bgColor = window.getConfiguredColorSwatchHex(item, key, value);
+              parts.push('<span class="cart-item-attr"><span class="cart-item-attr-label">' + label + ':</span> <span class="cart-item-color-swatch" title="' + displayValue + '" style="display:inline-block;width:14px;height:14px;border-radius:50%;background-color:' + bgColor + ';border:1px solid rgba(0,0,0,0.15);vertical-align:middle;margin-' + (document.documentElement.dir === 'rtl' ? 'right' : 'left') + ':4px;"></span></span>');
             } else {
-              parts.push('<span class="cart-item-attr"><span class="cart-item-attr-label">' + label + ':</span> ' + value + '</span>');
+              parts.push('<span class="cart-item-attr"><span class="cart-item-attr-label">' + label + ':</span> ' + displayValue + '</span>');
             }
           }
         });
@@ -4532,6 +5610,9 @@ function buildApiUrlWithLang(path) {
 let additionalJsProductLayout = 'standard';
 let additionalJsSettingsFetched = false;
 let additionalJsAllProductsLabel = null;
+let additionalJsProductsMenuLabel = null;
+let additionalJsShowAllProductsSubmenu = true;
+let additionalJsShowStockStatus = true;
 let additionalJsSidebarFiltersConfig = {};
 let additionalJsSortingConfig = {};
 let additionalJsViewToggleEnabled = true;
@@ -4574,6 +5655,7 @@ async function fetchAdditionalJsSettings(force) {
       }
       // Handle custom "Products" nav menu trigger label
       if (data.data.productsMenuLabel) {
+        additionalJsProductsMenuLabel = data.data.productsMenuLabel;
         var productsDropdown = document.querySelector('.zappy-products-dropdown > a');
         if (productsDropdown) {
           // Preserve the dropdown arrow SVG, only replace the text node
@@ -4582,6 +5664,43 @@ async function fetchAdditionalJsSettings(force) {
           productsDropdown.appendChild(document.createTextNode(data.data.productsMenuLabel + ' '));
           if (arrowSvg) productsDropdown.appendChild(arrowSvg);
         }
+        // Update search placeholders to use custom label
+        var isRTLPage = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'he' || document.documentElement.lang === 'ar';
+        var searchPlaceholder = isRTLPage
+          ? ('חיפוש ' + data.data.productsMenuLabel + '...')
+          : ('Search ' + data.data.productsMenuLabel.toLowerCase() + '...');
+        var navSearchInput = document.getElementById('nav-search-input');
+        if (navSearchInput) navSearchInput.placeholder = searchPlaceholder;
+        var mobileSearchInput = document.getElementById('mobile-search-input');
+        if (mobileSearchInput) mobileSearchInput.placeholder = searchPlaceholder;
+        // Update products page title
+        var pageTitle = document.getElementById('products-page-title');
+        if (pageTitle) pageTitle.textContent = data.data.productsMenuLabel;
+      }
+      // Handle show/hide "All Products" submenu item
+      if (data.data.showAllProductsSubmenu === false) {
+        additionalJsShowAllProductsSubmenu = false;
+        // Hide the "All Products" item in nav dropdown
+        var navList = document.getElementById('zappy-nav-category-links');
+        if (navList) {
+          var firstItem = navList.querySelector('li:first-child');
+          if (firstItem) {
+            var firstLink = firstItem.querySelector('a');
+            var href = firstLink ? firstLink.getAttribute('href') : '';
+            if (href === '/products' || href.indexOf('/products') !== -1 || href.indexOf('%2Fproducts') !== -1) {
+              firstItem.style.display = 'none';
+            }
+          }
+        }
+        // Hide the "All Products" link in catalog bar
+        var allProdLink = document.querySelector('.catalog-menu-all');
+        if (allProdLink) allProdLink.style.display = 'none';
+      }
+      // Handle show/hide stock status label
+      if (data.data.showStockStatus === false) {
+        additionalJsShowStockStatus = false;
+        var stockEl = document.getElementById('product-stock-display');
+        if (stockEl) stockEl.style.display = 'none';
       }
       if (data.data.sidebarFiltersConfig) {
         additionalJsSidebarFiltersConfig = data.data.sidebarFiltersConfig;
@@ -4602,6 +5721,19 @@ async function fetchAdditionalJsSettings(force) {
         }
         if (typeof setupFixedHeaders === 'function') {
           setTimeout(setupFixedHeaders, 50);
+        }
+      }
+      // Hide/show featured sections based on store settings
+      var hiddenSections = data.data.hiddenHomeSections || [];
+      var homePageSections = ['featured-products', 'featured-categories'];
+      for (var hi = 0; hi < homePageSections.length; hi++) {
+        var sec = document.getElementById(homePageSections[hi]);
+        if (sec) {
+          if (hiddenSections.indexOf(homePageSections[hi]) !== -1) {
+            sec.style.setProperty('display', 'none', 'important');
+          } else {
+            sec.style.removeProperty('display');
+          }
         }
       }
       // Handle dynamic announcement bar
@@ -4929,46 +6061,51 @@ function renderProductGrid(grid, products, t, isFeaturedSection, viewMode) {
     var pricePerUnitHtml = getPricePerUnitHtml(p);
     var priceHtml = showPrice ? '<div class="price">' + displayPrice + '</div>' + pricePerUnitHtml : '';
     
-    var favBtnHtml = '<button class="card-favorite-btn" data-product-id="' + p.id + '" onclick="event.preventDefault(); event.stopPropagation(); toggleCardFavorite(this, \'' + p.id + '\')" title="שמור למועדפים"><svg class="heart-outline" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M14.7917 0.833C12.705 0.833 10.811 2.376 10 4.462C9.189 2.375 7.295 0.833 5.208 0.833C2.337 0.833 0 3.17 0 6.042C0 11.675 8.128 17.767 9.758 18.93L10 19.104L10.243 18.93C11.873 17.767 20 11.674 20 6.042C20 3.17 17.663 0.833 14.792 0.833ZM10 18.078C5.716 14.965 0.833 10.019 0.833 6.042C0.833 3.629 2.796 1.667 5.208 1.667C7.498 1.667 9.583 4.05 9.583 6.667H10.417C10.417 4.05 12.502 1.667 14.792 1.667C17.204 1.667 19.167 3.629 19.167 6.042C19.167 10.019 14.284 14.965 10 18.078Z" fill="currentColor"/></svg><svg class="heart-filled" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20"><path d="M14.7917 0.833C12.705 0.833 10.811 2.376 10 4.462C9.189 2.375 7.295 0.833 5.208 0.833C2.337 0.833 0 3.17 0 6.042C0 11.675 8.128 17.767 9.758 18.93L10 19.104L10.243 18.93C11.873 17.767 20 11.674 20 6.042C20 3.17 17.663 0.833 14.792 0.833Z" fill="#e74c3c"/></svg></button>';
+    var favBtnHtml = isCatalogMode ? '' : '<button type="button" class="card-favorite-btn" data-product-id="' + p.id + '" onclick="event.preventDefault(); event.stopPropagation(); toggleCardFavorite(this, \'' + p.id + '\')" title="שמור למועדפים" aria-pressed="false"><svg class="heart-outline" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M14.7917 0.833C12.705 0.833 10.811 2.376 10 4.462C9.189 2.375 7.295 0.833 5.208 0.833C2.337 0.833 0 3.17 0 6.042C0 11.675 8.128 17.767 9.758 18.93L10 19.104L10.243 18.93C11.873 17.767 20 11.674 20 6.042C20 3.17 17.663 0.833 14.792 0.833ZM10 18.078C5.716 14.965 0.833 10.019 0.833 6.042C0.833 3.629 2.796 1.667 5.208 1.667C7.498 1.667 9.583 4.05 9.583 6.667H10.417C10.417 4.05 12.502 1.667 14.792 1.667C17.204 1.667 19.167 3.629 19.167 6.042C19.167 10.019 14.284 14.965 10 18.078Z" fill="currentColor"/></svg><svg class="heart-filled" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20"><path d="M14.7917 0.833C12.705 0.833 10.811 2.376 10 4.462C9.189 2.375 7.295 0.833 5.208 0.833C2.337 0.833 0 3.17 0 6.042C0 11.675 8.128 17.767 9.758 18.93L10 19.104L10.243 18.93C11.873 17.767 20 11.674 20 6.042C20 3.17 17.663 0.833 14.792 0.833Z" fill="#e74c3c"/></svg></button>';
+    var productHref = '/product/' + (p.slug || p.id);
+    var productCardMediaHtml = '<div class="product-card-media"><a href="' + productHref + '" class="product-card-image-link">' + imageHtml + '</a>' + tagsHtml + favBtnHtml + '</div>';
 
     if (layout === 'compact') {
-      cardContent = tagsHtml +
-        '<a href="/product/' + (p.slug || p.id) + '" class="product-card-link">' +
-          imageHtml +
-          '<div class="card-content">' +
-            '<h3>' + p.name + '</h3>' +
-            priceHtml +
-          '</div>' +
-        '</a>' +
-        favBtnHtml;
+      cardContent =
+        '<div class="product-card-inner">' +
+          productCardMediaHtml +
+          '<a href="' + productHref + '" class="product-card-body-link">' +
+            '<div class="card-content">' +
+              '<h3>' + p.name + '</h3>' +
+              priceHtml +
+            '</div>' +
+          '</a>' +
+        '</div>';
     } else if (layout === 'detailed') {
       var detailedDesc = stripHtmlToText(p.description || '');
       var actionButton = isCatalogMode
-        ? '<a href="/product/' + (p.slug || p.id) + '" class="add-to-cart view-details-btn">' + localizedViewDetails + '</a>'
+        ? '<a href="' + productHref + '" class="add-to-cart view-details-btn">' + localizedViewDetails + '</a>'
         : '<button class="add-to-cart" onclick="event.stopPropagation(); window.zappyHandleAddToCart(' + JSON.stringify(p).replace(/"/g, '&quot;') + ')">' + localizedAddToCart + '</button>';
-      cardContent = tagsHtml +
-        '<a href="/product/' + (p.slug || p.id) + '" class="product-card-link">' +
-          imageHtml +
-          '<div class="card-content">' +
-            '<h3>' + p.name + '</h3>' +
-            '<p>' + detailedDesc + '</p>' +
-            priceHtml +
-          '</div>' +
-        '</a>' +
-        actionButton +
-        favBtnHtml;
+      cardContent =
+        '<div class="product-card-inner">' +
+          productCardMediaHtml +
+          '<a href="' + productHref + '" class="product-card-body-link">' +
+            '<div class="card-content">' +
+              '<h3>' + p.name + '</h3>' +
+              '<p>' + detailedDesc + '</p>' +
+              priceHtml +
+            '</div>' +
+          '</a>' +
+        '</div>' +
+        actionButton;
     } else {
       var standardDesc = stripHtmlToText(p.description || '');
-      cardContent = tagsHtml +
-        '<a href="/product/' + (p.slug || p.id) + '" class="product-card-link">' +
-          imageHtml +
-          '<div class="card-content">' +
-            '<h3>' + p.name + '</h3>' +
-            '<p>' + standardDesc + '</p>' +
-            priceHtml +
-          '</div>' +
-        '</a>' +
-        favBtnHtml;
+      cardContent =
+        '<div class="product-card-inner">' +
+          productCardMediaHtml +
+          '<a href="' + productHref + '" class="product-card-body-link">' +
+            '<div class="card-content">' +
+              '<h3>' + p.name + '</h3>' +
+              '<p>' + standardDesc + '</p>' +
+              priceHtml +
+            '</div>' +
+          '</a>' +
+        '</div>';
     }
     
     return '<div class="product-card ' + layout + '" data-product-id="' + p.id + '">' + cardContent + '</div>';
@@ -5906,6 +7043,7 @@ function renderProductDetail(container, product, t) {
   if (hasVariants) {
     // Group variants by attribute type to create selection options
     const attributeGroups = {};
+    const attributeDisplayMap = {};
     variants.forEach(variant => {
       if (variant.attributes && variant.is_active !== false) {
         Object.entries(variant.attributes).forEach(([key, value]) => {
@@ -5913,6 +7051,16 @@ function renderProductDetail(container, product, t) {
             attributeGroups[key] = new Set();
           }
           attributeGroups[key].add(value);
+          if (!attributeDisplayMap[key]) {
+            attributeDisplayMap[key] = {};
+          }
+          const displayValue =
+            variant.attributes_display && Object.prototype.hasOwnProperty.call(variant.attributes_display, key)
+              ? variant.attributes_display[key]
+              : value;
+          if (!attributeDisplayMap[key][value]) {
+            attributeDisplayMap[key][value] = displayValue;
+          }
         });
       }
     });
@@ -5946,20 +7094,17 @@ function renderProductDetail(container, product, t) {
           if (ca !== cb) return ca - cb;
           return String(a).localeCompare(String(b));
         });
-        const isColorAttr = attrKey.toLowerCase() === 'color';
+        const isColorAttr = attrKey.toLowerCase() === 'color' || attrKey.toLowerCase().includes('color');
         
         const optionsHtml = valuesArray.map(value => {
-          // For color attribute, try to use color as background
+          const displayValue =
+            (attributeDisplayMap[attrKey] && attributeDisplayMap[attrKey][value]) || value;
+          // For color attribute, prefer configured hex and fall back for older sites.
           if (isColorAttr) {
-            var bgColor = value;
-            if (!/^#[0-9A-Fa-f]{3,6}$/.test(value)) {
-              var lc = value.toLowerCase();
-              var _clr = {'dark grey':'#555','dark gray':'#555','light grey':'#d3d3d3','light gray':'#d3d3d3','light blue':'lightblue','dark blue':'darkblue','light green':'lightgreen','dark green':'darkgreen','dark red':'darkred','light pink':'lightpink','dark orange':'darkorange','sky blue':'skyblue','royal blue':'royalblue','navy blue':'navy','forest green':'forestgreen','olive green':'olivedrab','sea green':'seagreen','hot pink':'hotpink','deep pink':'deeppink','dark violet':'darkviolet','slate grey':'slategrey','slate gray':'slategray','dim grey':'dimgrey','dim gray':'dimgray','steel blue':'steelblue','pale green':'palegreen','off white':'#f5f5f0','burgundy':'#800020','charcoal':'#36454f','champagne':'#f7e7ce','sand':'#c2b280','taupe':'#483c32','wine':'#722f37','rust':'#b7410e','sage':'#bcb88a','mint':'#98ff98','peach':'#ffcba4','cream':'#fffdd0','mauve':'#e0b0ff'};
-              bgColor = _clr[lc] || lc;
-            }
-            return '<button type="button" class="variant-option color-swatch" data-attr="' + attrKey + '" data-value="' + value + '" style="background-color: ' + bgColor + ';" title="' + value + '"></button>';
+            var bgColor = window.getConfiguredColorSwatchHex(product, attrKey, value);
+            return '<button type="button" class="variant-option color-swatch" data-attr="' + attrKey + '" data-value="' + value + '" data-display-value="' + displayValue + '" data-color-hex="' + bgColor + '" style="background-color: ' + bgColor + ';" title="' + displayValue + '"></button>';
           }
-          return '<button type="button" class="variant-option" data-attr="' + attrKey + '" data-value="' + value + '">' + value + '</button>';
+          return '<button type="button" class="variant-option" data-attr="' + attrKey + '" data-value="' + value + '" data-display-value="' + displayValue + '">' + displayValue + '</button>';
         }).join('');
         
         return '<div class="variant-group" data-group="' + attrKey + '"><label class="variant-group-label">' + label + ': <span class="variant-selected-value"></span></label><div class="variant-options">' + optionsHtml + '</div></div>';
@@ -5976,11 +7121,12 @@ function renderProductDetail(container, product, t) {
     variantSelectorHtml = '<div class="product-variants" id="product-variants">' + groupsHtml + '</div>';
   }
   
-  // Build breadcrumb
+  // Build breadcrumb (use custom products label if set via store settings)
+  var productsLabel = (typeof additionalJsProductsMenuLabel === 'string' && additionalJsProductsMenuLabel) ? additionalJsProductsMenuLabel : t.products;
   var breadcrumbHtml = '<nav class="product-breadcrumb">';
   breadcrumbHtml += '<a href="/">' + t.home + '</a>';
   breadcrumbHtml += '<span class="breadcrumb-separator">›</span>';
-  breadcrumbHtml += '<a href="/products">' + t.products + '</a>';
+  breadcrumbHtml += '<a href="/products">' + productsLabel + '</a>';
   if (product.category_name) {
     breadcrumbHtml += '<span class="breadcrumb-separator">›</span>';
     if (product.category_id) {
@@ -6048,10 +7194,10 @@ function renderProductDetail(container, product, t) {
         <div class="product-title-row">
           <h1>${product.name}</h1>
           <div class="product-icon-actions">
-            <button class="icon-btn favorite-btn" id="favorite-btn" onclick="toggleFavorite('${product.id}')" title="${t.saveToFavorites}">
+            ${!isCatalogMode ? `<button class="icon-btn favorite-btn" id="favorite-btn" onclick="toggleFavorite('${product.id}')" title="${t.saveToFavorites}">
               <svg class="heart-outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><g clip-path="url(#clip0_fav)"><path d="M14.7917 0.833496C12.705 0.833496 10.8108 2.376 10 4.46183C9.18917 2.37516 7.295 0.833496 5.20833 0.833496C2.33667 0.833496 0 3.17016 0 6.04183C0 11.6752 8.12833 17.7668 9.7575 18.9302L10 19.1035L10.2425 18.9302C11.8725 17.7668 20 11.6743 20 6.04183C20 3.17016 17.6633 0.833496 14.7917 0.833496ZM10 18.0777C5.71583 14.9652 0.833333 10.0185 0.833333 6.04183C0.833333 3.62933 2.79583 1.66683 5.20833 1.66683C7.49833 1.66683 9.58333 4.05016 9.58333 6.66683H10.4167C10.4167 4.05016 12.5017 1.66683 14.7917 1.66683C17.2042 1.66683 19.1667 3.62933 19.1667 6.04183C19.1667 10.0185 14.2842 14.9652 10 18.0777Z" fill="currentColor"/></g><defs><clipPath id="clip0_fav"><rect width="20" height="20" fill="white"/></clipPath></defs></svg>
               <svg class="heart-filled" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><g clip-path="url(#clip1_fav)"><path d="M14.7917 0.833496C12.705 0.833496 10.8108 2.376 10 4.46183C9.18917 2.37516 7.295 0.833496 5.20833 0.833496C2.33667 0.833496 0 3.17016 0 6.04183C0 11.6752 8.12833 17.7668 9.7575 18.9302L10 19.1035L10.2425 18.9302C11.8725 17.7668 20 11.6743 20 6.04183C20 3.17016 17.6633 0.833496 14.7917 0.833496Z" fill="#e74c3c"/></g><defs><clipPath id="clip1_fav"><rect width="20" height="20" fill="white"/></clipPath></defs></svg>
-            </button>
+            </button>` : ''}
             <button class="icon-btn share-btn" onclick="shareProduct()" title="${t.shareProduct}">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15.625 12.25C14.383 12.25 13.3075 12.9318 12.721 13.9338L7.348 11.563C7.59625 11.0935 7.75 10.567 7.75 9.99925C7.75 9.4315 7.59625 8.90575 7.348 8.4355L12.721 6.06475C13.3068 7.06675 14.3822 7.7485 15.625 7.7485C17.4858 7.7485 19 6.23425 19 4.3735C19 2.51275 17.4858 1 15.625 1C13.7642 1 12.25 2.51425 12.25 4.375C12.25 4.72675 12.319 5.05975 12.4195 5.37925L6.91825 7.80625C6.29875 7.08925 5.39425 6.625 4.375 6.625C2.51425 6.625 1 8.13925 1 10C1 11.8608 2.51425 13.375 4.375 13.375C5.395 13.375 6.2995 12.9108 6.91825 12.1938L12.4195 14.6207C12.319 14.9402 12.25 15.2732 12.25 15.625C12.25 17.4858 13.7642 19 15.625 19C17.4858 19 19 17.4858 19 15.625C19 13.7642 17.4858 12.25 15.625 12.25ZM15.625 1.75C17.0725 1.75 18.25 2.9275 18.25 4.375C18.25 5.8225 17.0725 7 15.625 7C14.1775 7 13 5.8225 13 4.375C13 2.9275 14.1775 1.75 15.625 1.75ZM4.375 12.625C2.9275 12.625 1.75 11.4475 1.75 10C1.75 8.5525 2.9275 7.375 4.375 7.375C5.8225 7.375 7 8.5525 7 10C7 11.4475 5.8225 12.625 4.375 12.625ZM15.625 18.25C14.1775 18.25 13 17.0725 13 15.625C13 14.1775 14.1775 13 15.625 13C17.0725 13 18.25 14.1775 18.25 15.625C18.25 17.0725 17.0725 18.25 15.625 18.25Z" fill="currentColor"/></svg>
             </button>
@@ -6349,19 +7495,24 @@ function toggleCardFavorite(btn, productId) {
 
   if (isActive) {
     btn.classList.remove('active');
+    btn.setAttribute('aria-pressed', 'false');
     fetch(apiBase + '/api/ecommerce/customers/me/favorites/' + productId + '?websiteId=' + wId, {
       method: 'DELETE',
       headers: { 'Authorization': 'Bearer ' + token }
     }).then(function(r) {
       if (r.ok) {
         _zappyProductToast('הוסר מהמועדפים');
-        document.querySelectorAll('.card-favorite-btn[data-product-id="' + productId + '"]').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.card-favorite-btn[data-product-id="' + productId + '"]').forEach(function(b) {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
         var detailBtn = document.getElementById('favorite-btn');
         if (detailBtn) detailBtn.classList.remove('active');
       }
-    }).catch(function() { btn.classList.add('active'); });
+    }).catch(function() { btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true'); });
   } else {
     btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
     fetch(apiBase + '/api/ecommerce/customers/me/favorites', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
@@ -6369,11 +7520,14 @@ function toggleCardFavorite(btn, productId) {
     }).then(function(r) {
       if (r.ok) {
         _zappyProductToast('נוסף למועדפים');
-        document.querySelectorAll('.card-favorite-btn[data-product-id="' + productId + '"]').forEach(function(b) { b.classList.add('active'); });
+        document.querySelectorAll('.card-favorite-btn[data-product-id="' + productId + '"]').forEach(function(b) {
+          b.classList.add('active');
+          b.setAttribute('aria-pressed', 'true');
+        });
         var detailBtn = document.getElementById('favorite-btn');
         if (detailBtn) detailBtn.classList.add('active');
       }
-    }).catch(function() { btn.classList.remove('active'); });
+    }).catch(function() { btn.classList.remove('active'); btn.setAttribute('aria-pressed', 'false'); });
   }
 }
 
@@ -6390,8 +7544,13 @@ function _syncCardFavorites() {
       var favIds = (data.favorites || data || []).map(function(f) { return f.product_id || f.productId || f.id; });
       document.querySelectorAll('.card-favorite-btn').forEach(function(btn) {
         var pid = btn.getAttribute('data-product-id');
-        if (favIds.indexOf(pid) !== -1) btn.classList.add('active');
-        else btn.classList.remove('active');
+        if (favIds.indexOf(pid) !== -1) {
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+        } else {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-pressed', 'false');
+        }
       });
     }).catch(function() {});
 }
@@ -6591,7 +7750,7 @@ function initVariantSelection(product, t) {
       // Update the variant label to show selected value inline
       var selectedValueSpan = document.querySelector('.variant-group[data-group="' + attrKey + '"] .variant-selected-value');
       if (selectedValueSpan) {
-        selectedValueSpan.textContent = attrValue;
+        selectedValueSpan.textContent = this.getAttribute('data-display-value') || attrValue;
       }
       
       // Update visibility/stock of options in other groups
@@ -6611,7 +7770,7 @@ function initVariantSelection(product, t) {
             firstVisible.classList.add('selected');
             selectedAttributes[otherKey] = firstVisible.getAttribute('data-value');
             var otherValueSpan = document.querySelector('.variant-group[data-group="' + otherKey + '"] .variant-selected-value');
-            if (otherValueSpan) otherValueSpan.textContent = firstVisible.getAttribute('data-value');
+            if (otherValueSpan) otherValueSpan.textContent = firstVisible.getAttribute('data-display-value') || firstVisible.getAttribute('data-value');
             anyAutoSelected = true;
           } else {
             delete selectedAttributes[otherKey];
@@ -6627,7 +7786,7 @@ function initVariantSelection(product, t) {
         btn.classList.add('selected');
         selectedAttributes[attrKey] = attrValue;
         var selectedValueSpanRefresh = document.querySelector('.variant-group[data-group="' + attrKey + '"] .variant-selected-value');
-        if (selectedValueSpanRefresh) selectedValueSpanRefresh.textContent = attrValue;
+        if (selectedValueSpanRefresh) selectedValueSpanRefresh.textContent = btn.getAttribute('data-display-value') || attrValue;
       }
       
       // Find matching variant and update UI
@@ -6748,10 +7907,14 @@ function updateVariantUI(variant, product, t, selectedAttributes) {
     // Update stock status
     const variantInStock = variant.stock_status !== 'out_of_stock';
     if (stockDisplay) {
-      stockDisplay.className = 'product-stock ' + (variantInStock ? 'in-stock' : 'out-of-stock');
-      stockDisplay.innerHTML = variantInStock 
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>' + t.inStock
-        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>' + t.outOfStock;
+      if (!additionalJsShowStockStatus) { stockDisplay.style.display = 'none'; }
+      else {
+        stockDisplay.style.display = '';
+        stockDisplay.className = 'product-stock ' + (variantInStock ? 'in-stock' : 'out-of-stock');
+        stockDisplay.innerHTML = variantInStock 
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>' + t.inStock
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>' + t.outOfStock;
+      }
     }
     
     // Update SKU if variant has one
@@ -6797,8 +7960,12 @@ function updateVariantUI(variant, product, t, selectedAttributes) {
     if (allGroupsSelected) {
       // All groups selected but no variant matches - treat as out of stock / unavailable
       if (stockDisplay) {
-        stockDisplay.className = 'product-stock out-of-stock';
-        stockDisplay.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>' + (t.outOfStock || 'Out of Stock');
+        if (!additionalJsShowStockStatus) { stockDisplay.style.display = 'none'; }
+        else {
+          stockDisplay.style.display = '';
+          stockDisplay.className = 'product-stock out-of-stock';
+          stockDisplay.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>' + (t.outOfStock || 'Out of Stock');
+        }
       }
       
       if (addToCartBtn) {
@@ -6821,10 +7988,14 @@ function updateVariantUI(variant, product, t, selectedAttributes) {
       // Reset to base product stock
       const baseInStock = product.stock_status !== 'out_of_stock';
       if (stockDisplay) {
-        stockDisplay.className = 'product-stock ' + (baseInStock ? 'in-stock' : 'out-of-stock');
-        stockDisplay.innerHTML = baseInStock 
-          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>' + t.inStock
-          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>' + t.outOfStock;
+        if (!additionalJsShowStockStatus) { stockDisplay.style.display = 'none'; }
+        else {
+          stockDisplay.style.display = '';
+          stockDisplay.className = 'product-stock ' + (baseInStock ? 'in-stock' : 'out-of-stock');
+          stockDisplay.innerHTML = baseInStock 
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>' + t.inStock
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>' + t.outOfStock;
+        }
       }
       
       if (addToCartBtn) {
@@ -6893,6 +8064,7 @@ function addProductToCart() {
       name: selectedVariant.name,
       sku: selectedVariant.sku,
       attributes: selectedVariant.attributes,
+      attributes_display: selectedVariant.attributes_display || selectedVariant.attributes,
       price: variantPrice
     };
     cartItem.variantName = selectedVariant.name;
@@ -6939,1035 +8111,6 @@ async function loadRelatedProducts(currentProduct, t) {
   }
 }
 /* ==ZAPPY E-COMMERCE JS END== */
-
-/* Cookie Consent */
-
-// Helper function to check cookie consent
-function hasConsentFor(category) {
-  if (typeof window.CookieConsent === 'undefined') {
-    return false; // Default to no consent if cookie consent not loaded
-  }
-  
-  return window.CookieConsent.validConsent(category);
-}
-
-// Helper function to execute code only with consent
-function withConsent(category, callback) {
-  if (hasConsentFor(category)) {
-    callback();
-  } else {
-    console.log(`[WARNING] Skipping ${category} code - no user consent`);
-  }
-}
-
-// Cookie Consent Initialization
-
-(function() {
-  'use strict';
-  
-  let initAttempts = 0;
-  const maxAttempts = 50; // 5 seconds max wait
-  
-  // Wait for DOM and vanilla-cookieconsent to be ready
-  function initCookieConsent() {
-    initAttempts++;
-    
-    
-    if (typeof window.CookieConsent === 'undefined') {
-      if (initAttempts < maxAttempts) {
-        setTimeout(initCookieConsent, 100);
-      } else {
-      }
-      return;
-    }
-
-    const cc = window.CookieConsent;
-    
-    
-    // Initialize cookie consent
-    try {
-      cc.run({
-  "autoShow": true,
-  "mode": "opt-in",
-  "revision": 0,
-  "categories": {
-    "necessary": {
-      "enabled": true,
-      "readOnly": true
-    },
-    "analytics": {
-      "enabled": false,
-      "readOnly": false,
-      "autoClear": {
-        "cookies": [
-          {
-            "name": "_ga"
-          },
-          {
-            "name": "_ga_*"
-          },
-          {
-            "name": "_gid"
-          },
-          {
-            "name": "_gat"
-          }
-        ]
-      }
-    },
-    "marketing": {
-      "enabled": false,
-      "readOnly": false,
-      "autoClear": {
-        "cookies": [
-          {
-            "name": "_fbp"
-          },
-          {
-            "name": "_fbc"
-          },
-          {
-            "name": "fr"
-          }
-        ]
-      }
-    }
-  },
-  "language": {
-    "default": "he",
-    "translations": {
-      "he": {
-        "consentModal": {
-          "title": "אנחנו משתמשים בעוגיות 🍪",
-          "description": "AliFinds משתמש בעוגיות כדי לשפר את החוויה שלך, לנתח שימוש באתר ולסייע במאמצי השיווק שלנו.",
-          "acceptAllBtn": "אשר הכל",
-          "acceptNecessaryBtn": "רק הכרחי",
-          "showPreferencesBtn": "נהל העדפות",
-          "footer": "<a href=\"#privacy-policy\">מדיניות פרטיות</a> | <a href=\"#terms-conditions\">תנאי שימוש</a>"
-        },
-        "preferencesModal": {
-          "title": "העדפות עוגיות",
-          "acceptAllBtn": "אשר הכל",
-          "acceptNecessaryBtn": "רק הכרחי",
-          "savePreferencesBtn": "שמור העדפות",
-          "closeIconLabel": "סגור",
-          "sections": [
-            {
-              "title": "עוגיות חיוניות",
-              "description": "עוגיות אלה הכרחיות לתפקוד האתר ולא ניתן להשבית אותן.",
-              "linkedCategory": "necessary"
-            },
-            {
-              "title": "עוגיות ניתוח",
-              "description": "עוגיות אלה עוזרות לנו להבין איך המבקרים מתקשרים עם האתר שלנו.",
-              "linkedCategory": "analytics"
-            },
-            {
-              "title": "עוגיות שיווקיות",
-              "description": "עוגיות אלה משמשות להצגת פרסומות מותאמות אישית.",
-              "linkedCategory": "marketing"
-            }
-          ]
-        }
-      }
-    }
-  },
-  "guiOptions": {
-    "consentModal": {
-      "layout": "box",
-      "position": "bottom right",
-      "equalWeightButtons": true,
-      "flipButtons": false
-    },
-    "preferencesModal": {
-      "layout": "box",
-      "equalWeightButtons": true,
-      "flipButtons": false
-    }
-  }
-});
-      
-      // Google Consent Mode v2 integration
-      // Update consent state based on accepted cookie categories
-      function updateGoogleConsentMode() {
-        if (typeof gtag !== 'function') {
-          // Define gtag if not already defined (needed for consent updates)
-          window.dataLayer = window.dataLayer || [];
-          window.gtag = function(){dataLayer.push(arguments);};
-        }
-        
-        var analyticsAccepted = cc.acceptedCategory('analytics');
-        var marketingAccepted = cc.acceptedCategory('marketing');
-        
-        gtag('consent', 'update', {
-          'analytics_storage': analyticsAccepted ? 'granted' : 'denied',
-          'ad_storage': marketingAccepted ? 'granted' : 'denied',
-          'ad_user_data': marketingAccepted ? 'granted' : 'denied',
-          'ad_personalization': marketingAccepted ? 'granted' : 'denied'
-        });
-      }
-      
-      // Update consent on initial load (if user previously accepted)
-      updateGoogleConsentMode();
-      
-      // Handle consent changes via onChange callback
-      if (typeof cc.onChange === 'function') {
-        cc.onChange(function(cookie, changed_preferences) {
-          updateGoogleConsentMode();
-        });
-      }
-
-      // Note: Cookie Preferences button removed per marketing guidelines
-      // Footer should be clean and minimal - users can manage cookies via banner
-    } catch (error) {
-    }
-  }
-
-  // Initialize when DOM is ready - multiple approaches for reliability
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCookieConsent);
-    // Backup timeout in case DOMContentLoaded doesn't fire
-    setTimeout(initCookieConsent, 1000);
-  } else if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    initCookieConsent();
-  } else {
-    // Fallback - try after a short delay
-    setTimeout(initCookieConsent, 500);
-  }
-  
-  // Additional fallback - try after page load
-  if (typeof window !== 'undefined') {
-    if (window.addEventListener) {
-      window.addEventListener('load', initCookieConsent, { once: true });
-    }
-  }
-})();
-
-/* Accessibility Features */
-
-/* Mickidum Accessibility Toolbar Initialization - Zappy Style */
-
-window.onload = function() {
-    
-    try {
-        window.micAccessTool = new MicAccessTool({
-            buttonPosition: 'left', // Position on left side
-            forceLang: 'he-IL', // Force language
-            icon: {
-                position: {
-                    bottom: { size: 50, units: 'px' },
-                    left: { size: 20, units: 'px' },
-                    type: 'fixed'
-                },
-                backgroundColor: 'transparent', // Transparent to allow CSS styling
-                color: 'transparent', // Let CSS handle coloring
-                img: 'accessible',
-                circular: false // Square button for consistent styling
-            },
-            menu: {
-                dimensions: {
-                    width: { size: 300, units: 'px' },
-                    height: { size: 'auto', units: 'px' }
-                }
-            }
-        });
-        
-    } catch (error) {
-    }
-    
-    // Keyboard shortcut handler: ALT+A (Option+A on Mac) to toggle accessibility widget visibility (desktop only)
-    document.addEventListener('keydown', function(event) {
-        // Check if ALT+A is pressed (ALT on Windows/Linux, Option on Mac)
-        var isAltOrOption = event.altKey;
-        // Use event.code for reliable physical key detection (works regardless of Option key character output)
-        var isAKey = event.code === 'KeyA' || event.keyCode === 65 || event.which === 65 || 
-                      (event.key && (event.key.toLowerCase() === 'a' || event.key === 'å' || event.key === 'Å'));
-        
-        if (isAltOrOption && isAKey) {
-            // Only work on desktop (screen width > 768px)
-            if (window.innerWidth > 768) {
-                event.preventDefault();
-                event.stopPropagation();
-                
-                // Toggle visibility class on body
-                var isVisible = document.body.classList.contains('accessibility-widget-visible');
-                
-                if (isVisible) {
-                    // Hide the widget
-                    document.body.classList.remove('accessibility-widget-visible');
-                } else {
-                    // Show the widget
-                    document.body.classList.add('accessibility-widget-visible');
-                    
-                    // After a short delay, click the button to open the menu
-                    setTimeout(function() {
-                        var accessButton = document.getElementById('mic-access-tool-general-button');
-                        if (accessButton) {
-                            accessButton.click();
-                        }
-                    }, 200);
-                }
-            }
-        }
-    }, true);
-};
-
-
-    // Enhanced contact form handling with Elastic Email integration
-    // API URL: https://api.zappy5.com
-    (function() {
-        // Check if contact form handler is already loaded
-        if (window.zappyContactFormLoaded) {
-            console.log('📧 Zappy contact form already loaded');
-            return;
-        }
-        window.zappyContactFormLoaded = true;
-        
-        // Wait for DOM to be ready before initializing
-        function initContactForm() {
-            console.log('📧 Zappy: Initializing contact form handler...');
-            
-            // Find contact form with multiple selector fallbacks
-            const contactForm = document.querySelector('.contact-form') || 
-                               document.querySelector('form[action*="contact"]') ||
-                               document.querySelector('form#contact') ||
-                               document.querySelector('form#contactForm') ||
-                               document.getElementById('contactForm') ||
-                               document.querySelector('section.contact form') ||
-                               document.querySelector('section#contact form') ||
-                               document.querySelector('form');
-            
-            if (!contactForm) {
-                console.log('⚠️ Zappy: No contact form found on page');
-                return;
-            }
-            
-            console.log('✅ Zappy: Contact form found:', contactForm.className || contactForm.id || 'unnamed form');
-            
-            // Remove any existing submit handlers by cloning the form element
-            const newContactForm = contactForm.cloneNode(true);
-            contactForm.parentNode.replaceChild(newContactForm, contactForm);
-            
-            // Now add our handler to the clean form
-            newContactForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Get form data with multi-value support (checkboxes, multi-selects)
-            const formData = new FormData(this);
-            const data = {};
-            for (const [key, value] of formData.entries()) {
-                if (data[key] !== undefined) {
-                    if (Array.isArray(data[key])) data[key].push(value);
-                    else data[key] = [data[key], value];
-                } else {
-                    data[key] = value;
-                }
-            }
-            
-            // Smart name resolution: name > firstName+lastName > email
-            const _coreNameFields = ['name','firstName','first_name','fname','lastName','last_name','lname'];
-            const _coreEmailFields = ['email','emailAddress','mail','e-mail'];
-            const _corePhoneFields = ['phone','tel','telephone','mobile','cellphone'];
-            const _coreMsgFields = ['message','msg','comments','comment','description','details','notes','body','text','inquiry'];
-            const _coreSubjectFields = ['subject','topic','regarding','re'];
-            const _allCoreFields = [].concat(_coreNameFields, _coreEmailFields, _corePhoneFields, _coreMsgFields, _coreSubjectFields);
-            
-            const name = (data.name || '').trim()
-                || [data.firstName || data.first_name || data.fname || '', data.lastName || data.last_name || data.lname || ''].filter(Boolean).join(' ').trim()
-                || (data.email || data.emailAddress || data.mail || '').trim()
-                || 'Anonymous';
-            
-            const email = (data.email || data.emailAddress || data.mail || data['e-mail'] || '').trim();
-            
-            const phone = data.phone || data.tel || data.telephone || data.mobile || data.cellphone || null;
-            
-            const subject = data.subject || data.topic || data.regarding || data.re || 'Contact Form Submission';
-            
-            // Smart message resolution: use message field, or build summary from all non-core fields
-            let message = (data.message || data.msg || data.comments || data.comment || data.description || data.details || data.notes || data.body || data.text || data.inquiry || '').trim();
-            if (!message) {
-                const extraEntries = Object.entries(data).filter(function(e) { return !_allCoreFields.includes(e[0]); });
-                if (extraEntries.length > 0) {
-                    message = extraEntries.map(function(e) {
-                        const label = e[0].replace(/([A-Z])/g, ' $1').replace(/[_-]/g, ' ').trim();
-                        const val = Array.isArray(e[1]) ? e[1].join(', ') : e[1];
-                        return label + ': ' + val;
-                    }).join('\n');
-                } else {
-                    message = 'Form submission from ' + window.location.pathname;
-                }
-            }
-            
-            // Collect extra fields (anything not in the core set)
-            const extraFields = {};
-            for (const [key, value] of Object.entries(data)) {
-                if (!_allCoreFields.includes(key) && value !== '' && value !== null && value !== undefined) {
-                    extraFields[key] = value;
-                }
-            }
-            
-            if (!email) {
-                console.error('❌ Validation failed: no email found in form data');
-                showNotification('Please fill in all required fields', 'error');
-                return;
-            }
-            
-            // Email validation
-            if (!isValidEmail(email)) {
-                showNotification('Please enter a valid email address', 'error');
-                return;
-            }
-            
-            // Get submit button and show loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
-            
-            // Add loading animation
-            submitBtn.classList.add('loading');
-            
-            try {
-                // Send to Zappy email API - prefer ZAPPY_API_BASE (set per-deployment) over build-time URL
-                const apiUrl = (window.ZAPPY_API_BASE || 'https://api.zappy5.com').replace(/\/$/, '');
-                const endpoint = apiUrl + '/api/email/contact-form';
-                
-                // Get current page path for thank you page lookup
-                // In preview mode, use ZAPPY_CONFIG.currentPagePath; otherwise use pathname
-                let currentPagePath = window.location.pathname;
-                if (window.ZAPPY_CONFIG && window.ZAPPY_CONFIG.currentPagePath) {
-                    currentPagePath = window.ZAPPY_CONFIG.currentPagePath;
-                } else {
-                    // Try to extract page from URL query param (fullscreen preview mode)
-                    try {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const pageParam = urlParams.get('page');
-                        if (pageParam) currentPagePath = pageParam;
-                    } catch (e) {}
-                }
-                
-                const payload = {
-                    websiteId: '8d6de552-e174-4db3-8445-5628eb156505',
-                    name: name,
-                    email: email,
-                    subject: subject,
-                    message: message,
-                    phone: phone,
-                    currentPagePath: currentPagePath
-                };
-                if (Object.keys(extraFields).length > 0) {
-                    payload.extraFields = extraFields;
-                }
-                
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Check if there's a thank you page to redirect to
-                    if (result.thankYouPagePath && result.ticketNumber) {
-                        console.log('🎁 Redirecting to thank you page:', result.thankYouPagePath);
-                        
-                        // Build the redirect URL based on the current environment
-                        let thankYouUrl;
-                        const ticketParam = 'ticket=' + encodeURIComponent(result.ticketNumber);
-                        
-                        // Check if we're in preview mode (URL contains /preview/ or /preview-fullscreen/)
-                        const isPreviewMode = window.location.pathname.includes('/preview');
-                        
-                        if (isPreviewMode && window.ZAPPY_CONFIG) {
-                            // In preview mode, use the preview URL format
-                            const websiteId = window.ZAPPY_CONFIG.websiteId || '8d6de552-e174-4db3-8445-5628eb156505';
-                            const authToken = window.ZAPPY_CONFIG.authToken;
-                            const baseUrl = window.location.origin;
-                            const previewType = window.location.pathname.includes('fullscreen') ? 'preview-fullscreen' : 'preview';
-                            
-                            thankYouUrl = baseUrl + '/api/website/' + previewType + '/' + websiteId + '?page=' + encodeURIComponent(result.thankYouPagePath) + '&' + ticketParam;
-                            if (authToken) {
-                                thankYouUrl += '&auth_token=' + encodeURIComponent(authToken);
-                            }
-                        } else {
-                            // In deployed/production mode, navigate directly to the page
-                            thankYouUrl = result.thankYouPagePath + '?' + ticketParam;
-                        }
-                        
-                        console.log('📍 Navigating to:', thankYouUrl);
-                        window.location.href = thankYouUrl;
-                        return; // Don't show notification since we're redirecting
-                    }
-                    
-                    // No thank you page - show standard notification
-                    showNotification(result.message || 'Thank you for your message! We\'ll get back to you soon.', 'success');
-                    
-                    // Reset form
-                    this.reset();
-                    
-                    // Optional: Show additional success UI
-                    showSuccessModal();
-                } else {
-                    // Error from server
-                    console.error('❌ Server returned error:', result);
-                    showNotification(result.error || 'Failed to send message. Please try again.', 'error');
-                }
-                
-            } catch (error) {
-                console.error('❌ Network error:', error);
-                console.error('Failed to connect to:', 'https://api.zappy5.com/api/email/contact-form');
-                
-                // Fallback: Show error message and provide alternative contact info
-                showNotification(
-                    'Unable to send message right now. Please try again later or contact us directly.',
-                    'error'
-                );
-                
-                // Show fallback contact info
-                showFallbackContact();
-            } finally {
-                // Reset button state
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('loading');
-            }
-        });
-        
-        // Email validation helper
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-        
-        // Notification system
-        function showNotification(message, type = 'info') {
-            // Remove existing notifications
-            const existingNotifications = document.querySelectorAll('.zappy-notification');
-            existingNotifications.forEach(notification => notification.remove());
-            
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `zappy-notification zappy-notification--${type}`;
-            notification.innerHTML = `
-            <div class="zappy-notification__content">
-                <span class="zappy-notification__icon">
-                    ${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}
-                </span>
-                <span class="zappy-notification__message">${message}</span>
-                <button class="zappy-notification__close" onclick="this.parentElement.parentElement.remove()">×</button>
-            </div>
-            `;
-            
-            // Add styles if not already present
-            if (!document.querySelector('#zappy-notification-styles')) {
-                const styles = document.createElement('style');
-            styles.id = 'zappy-notification-styles';
-            styles.textContent = `
-                .zappy-notification {
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    max-width: 400px;
-                    padding: 16px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 10000;
-                    animation: slideInRight 0.3s ease-out;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                }
-                
-                .zappy-notification--success {
-                    background-color: #d4edda;
-                    border: 1px solid #c3e6cb;
-                    color: #155724;
-                }
-                
-                .zappy-notification--error {
-                    background-color: #f8d7da;
-                    border: 1px solid #f5c6cb;
-                    color: #721c24;
-                }
-                
-                .zappy-notification--info {
-                    background-color: #d1ecf1;
-                    border: 1px solid #bee5eb;
-                    color: #0c5460;
-                }
-                
-                .zappy-notification__content {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
-                
-                .zappy-notification__icon {
-                    font-size: 18px;
-                    flex-shrink: 0;
-                }
-                
-                .zappy-notification__message {
-                    flex: 1;
-                    font-size: 14px;
-                    line-height: 1.4;
-                }
-                
-                .zappy-notification__close {
-                    background: none;
-                    border: none;
-                    font-size: 20px;
-                    cursor: pointer;
-                    padding: 0;
-                    width: 24px;
-                    height: 24px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    opacity: 0.7;
-                }
-                
-                .zappy-notification__close:hover {
-                    opacity: 1;
-                }
-                
-                @keyframes slideInRight {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-                
-                .loading {
-                    position: relative;
-                    pointer-events: none;
-                }
-                
-                .loading::after {
-                    content: '';
-                    position: absolute;
-                    width: 16px;
-                    height: 16px;
-                    margin: auto;
-                    border: 2px solid transparent;
-                    border-top-color: currentColor;
-                    border-radius: 50%;
-                    animation: spin 1s linear infinite;
-                    top: 0;
-                    left: 0;
-                    bottom: 0;
-                    right: 0;
-                }
-                
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(styles);
-        }
-        
-        // Add to page
-        document.body.appendChild(notification);
-        
-        // Auto-remove after 5 seconds for success, 8 seconds for errors
-        const timeout = type === 'error' ? 8000 : 5000;
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.style.animation = 'slideInRight 0.3s ease-out reverse';
-                setTimeout(() => notification.remove(), 300);
-            }
-        }, timeout);
-    }
-    
-    // Success modal for enhanced UX
-    function showSuccessModal() {
-        const modal = document.createElement('div');
-        modal.className = 'zappy-success-modal';
-        modal.innerHTML = `
-            <div class="zappy-success-modal__backdrop" onclick="this.parentElement.remove()">
-                <div class="zappy-success-modal__content" onclick="event.stopPropagation()">
-                    <div class="zappy-success-modal__icon">🎉</div>
-                    <h3>Message Sent Successfully!</h3>
-                    <p>Thank you for reaching out. We've received your message and will get back to you as soon as possible.</p>
-                    <button onclick="this.closest('.zappy-success-modal').remove()" class="zappy-success-modal__button">
-                        Got it!
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        // Add modal styles
-        if (!document.querySelector('#zappy-modal-styles')) {
-            const styles = document.createElement('style');
-            styles.id = 'zappy-modal-styles';
-            styles.textContent = `
-                .zappy-success-modal {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 10001;
-                    animation: fadeIn 0.3s ease-out;
-                }
-                
-                .zappy-success-modal__backdrop {
-                    width: 100%;
-                    height: 100%;
-                    background-color: rgba(0,0,0,0.5);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 20px;
-                }
-                
-                .zappy-success-modal__content {
-                    background: white;
-                    padding: 40px;
-                    border-radius: 12px;
-                    text-align: center;
-                    max-width: 400px;
-                    width: 100%;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                    animation: slideUp 0.3s ease-out;
-                }
-                
-                .zappy-success-modal__icon {
-                    font-size: 48px;
-                    margin-bottom: 20px;
-                }
-                
-                .zappy-success-modal__content h3 {
-                    margin: 0 0 15px 0;
-                    color: #333;
-                    font-size: 24px;
-                }
-                
-                .zappy-success-modal__content p {
-                    margin: 0 0 25px 0;
-                    color: #666;
-                    line-height: 1.5;
-                }
-                
-                .zappy-success-modal__button {
-                    background: #007bff;
-                    color: white;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 6px;
-                    font-size: 16px;
-                    cursor: pointer;
-                    transition: background-color 0.2s;
-                }
-                
-                .zappy-success-modal__button:hover {
-                    background: #0056b3;
-                }
-                
-                @keyframes fadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                
-                @keyframes slideUp {
-                    from { transform: translateY(30px); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
-            `;
-            document.head.appendChild(styles);
-        }
-        
-        document.body.appendChild(modal);
-        
-        // Auto-close after 5 seconds
-        setTimeout(() => {
-            if (modal.parentElement) {
-                modal.remove();
-            }
-        }, 5000);
-    }
-    
-    // Fallback contact information
-    function showFallbackContact() {
-        const fallback = document.createElement('div');
-        fallback.className = 'zappy-fallback-contact';
-        fallback.innerHTML = `
-            <div class="zappy-fallback-contact__content">
-                <h4>Alternative Contact Methods</h4>
-                <p>If you're having trouble sending your message, you can also reach us at:</p>
-                <div class="zappy-fallback-contact__methods">
-                    <a href="mailto:support@zappy5.com?subject=Contact Form Issue" class="zappy-fallback-contact__method">
-                        📧 support@zappy5.com
-                    </a>
-                </div>
-                <button onclick="this.parentElement.parentElement.remove()" class="zappy-fallback-contact__close">
-                    Close
-                </button>
-            </div>
-        `;
-        
-        // Add fallback styles
-        if (!document.querySelector('#zappy-fallback-styles')) {
-            const styles = document.createElement('style');
-            styles.id = 'zappy-fallback-styles';
-            styles.textContent = `
-                .zappy-fallback-contact {
-                    position: fixed;
-                    bottom: 20px;
-                    right: 20px;
-                    max-width: 350px;
-                    background: white;
-                    border: 1px solid #ddd;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 10000;
-                    animation: slideInUp 0.3s ease-out;
-                }
-                
-                .zappy-fallback-contact__content {
-                    padding: 20px;
-                }
-                
-                .zappy-fallback-contact__content h4 {
-                    margin: 0 0 10px 0;
-                    color: #333;
-                    font-size: 16px;
-                }
-                
-                .zappy-fallback-contact__content p {
-                    margin: 0 0 15px 0;
-                    color: #666;
-                    font-size: 14px;
-                    line-height: 1.4;
-                }
-                
-                .zappy-fallback-contact__methods {
-                    margin-bottom: 15px;
-                }
-                
-                .zappy-fallback-contact__method {
-                    display: block;
-                    padding: 8px 12px;
-                    background: #f8f9fa;
-                    border: 1px solid #e9ecef;
-                    border-radius: 4px;
-                    text-decoration: none;
-                    color: #495057;
-                    font-size: 14px;
-                    transition: background-color 0.2s;
-                }
-                
-                .zappy-fallback-contact__method:hover {
-                    background: #e9ecef;
-                }
-                
-                .zappy-fallback-contact__close {
-                    background: #6c757d;
-                    color: white;
-                    border: none;
-                    padding: 8px 16px;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    cursor: pointer;
-                    float: right;
-                }
-                
-                @keyframes slideInUp {
-                    from {
-                        transform: translateY(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateY(0);
-                        opacity: 1;
-                    }
-                }
-            `;
-            document.head.appendChild(styles);
-        }
-        
-        document.body.appendChild(fallback);
-        
-        // Auto-remove after 10 seconds
-        setTimeout(() => {
-            if (fallback.parentElement) {
-                fallback.remove();
-            }
-        }, 10000);
-        }
-        
-        // ═══════════════════════════════════════════════════════════════
-        // 🍔 MOBILE MENU TOGGLE HANDLER
-        // ═══════════════════════════════════════════════════════════════
-        (function initMobileMenu() {
-            const mobileToggle = document.getElementById('mobileToggle') || 
-                               document.querySelector('.mobile-toggle') || 
-                               document.querySelector('.hamburger');
-            const navMenu = document.getElementById('navMenu') || 
-                          document.querySelector('.nav-menu') ||
-                          document.querySelector('.navbar-menu');
-            
-            if (mobileToggle && navMenu) {
-                
-                // Toggle menu on button click
-                mobileToggle.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const hamburgerIcon = this.querySelector('.hamburger-icon');
-                    const closeIcon = this.querySelector('.close-icon');
-                    const isActive = this.classList.contains('active');
-                    
-                    if (isActive) {
-                        // Show hamburger, hide X
-                        if (hamburgerIcon) hamburgerIcon.style.display = 'block';
-                        if (closeIcon) closeIcon.style.display = 'none';
-                        this.classList.remove('active');
-                        navMenu.classList.remove('active');
-                        document.body.style.overflow = '';
-                    } else {
-                        // Show X, hide hamburger  
-                        if (hamburgerIcon) hamburgerIcon.style.display = 'none';
-                        if (closeIcon) closeIcon.style.display = 'block';
-                        this.classList.add('active');
-                        navMenu.classList.add('active');
-                        document.body.style.overflow = 'hidden'; // Prevent scroll when menu open
-                    }
-                });
-                
-                // Close menu when clicking a nav link
-                const navLinks = navMenu.querySelectorAll('a');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
-                        const closeIcon = mobileToggle.querySelector('.close-icon');
-                        if (hamburgerIcon) hamburgerIcon.style.display = 'block';
-                        if (closeIcon) closeIcon.style.display = 'none';
-                        mobileToggle.classList.remove('active');
-                        navMenu.classList.remove('active');
-                        document.body.style.overflow = '';
-                    });
-                });
-                
-                // Close menu when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (navMenu.classList.contains('active') && 
-                        !navMenu.contains(e.target) && 
-                        !mobileToggle.contains(e.target)) {
-                        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
-                        const closeIcon = mobileToggle.querySelector('.close-icon');
-                        if (hamburgerIcon) hamburgerIcon.style.display = 'block';
-                        if (closeIcon) closeIcon.style.display = 'none';
-                        mobileToggle.classList.remove('active');
-                        navMenu.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                });
-                
-                // Handle escape key
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-                        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
-                        const closeIcon = mobileToggle.querySelector('.close-icon');
-                        if (hamburgerIcon) hamburgerIcon.style.display = 'block';
-                        if (closeIcon) closeIcon.style.display = 'none';
-                        mobileToggle.classList.remove('active');
-                        navMenu.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                });
-                
-                // Phone header button functionality
-                const phoneHeaderBtn = document.querySelector('.phone-header-btn');
-                if (phoneHeaderBtn) {
-                    phoneHeaderBtn.addEventListener('click', function() {
-                        // Dynamically get phone number from existing tel: links on the page
-                        // This ensures the phone button uses the same number as other phone links
-                        // Falls back to [business_phone] placeholder which businessInfoUpdater can replace
-                        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
-                        const phoneNumber = phoneLinks.length > 0 
-                            ? phoneLinks[0].getAttribute('href').replace('tel:', '')
-                            : '[business_phone]';
-                        window.location.href = 'tel:' + phoneNumber;
-                    });
-                }
-            }
-        })();
-        
-        // ═══════════════════════════════════════════════════════════════
-        // 🔗 DISABLE SOCIAL MEDIA LINKS WITH PLACEHOLDERS
-        // ═══════════════════════════════════════════════════════════════
-        (function disablePlaceholderLinks() {
-            // List of social media placeholders to check for (both old and new formats)
-            const socialPlaceholders = [
-                // New format (handle placeholders within URLs)
-                '[facebook_handle]',
-                '[instagram_handle]',
-                '[whatsapp_handle]',
-                '[twitter_handle]',
-                '[linkedin_handle]',
-                '[youtube_handle]',
-                '[tiktok_handle]',
-                '[pinterest_handle]',
-                // Old format (full URL placeholders)
-                '[social_facebook]',
-                '[social instagram]',
-                '[social_instagram]',
-                '[social whatsapp]',
-                '[social_whatsapp]',
-                '[social_twitter]',
-                '[social_linkedin]',
-                '[social_youtube]',
-                '[social_tiktok]',
-                '[social_pinterest]'
-            ];
-            
-            // Find all links that might contain placeholders
-            const allLinks = document.querySelectorAll('a[href]');
-            
-            allLinks.forEach(link => {
-                const href = link.getAttribute('href');
-                
-                // Check if href contains any placeholder
-                const hasPlaceholder = socialPlaceholders.some(placeholder => 
-                    href && href.includes(placeholder)
-                );
-                
-                if (hasPlaceholder) {
-                    // Prevent navigation
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
-                    });
-                    
-                    // Add visual indication that link is disabled
-                    link.style.cursor = 'not-allowed';
-                    link.style.opacity = '0.6';
-                    link.setAttribute('aria-disabled', 'true');
-                    link.setAttribute('title', 'Social media link not configured');
-                    
-                    // Remove target="_blank" to prevent opening empty tabs
-                    link.removeAttribute('target');
-                    link.removeAttribute('rel');
-                }
-            });
-        })();
-        } // End of initContactForm
-        
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initContactForm);
-        } else {
-            // DOM is already ready, initialize immediately
-            initContactForm();
-        }
-    })(); // End of IIFE
-    
 
 
 /* ZAPPY_PUBLISHED_LIGHTBOX_RUNTIME */

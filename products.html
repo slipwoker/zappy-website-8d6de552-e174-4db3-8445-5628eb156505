@@ -229,8 +229,6 @@
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
@@ -244,6 +242,8 @@
     <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
     <!-- Mickidum Accessibility Toolbar -->
     <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/styles.css">
 
     <style id="zappy-dropdown-submenu-styles">
@@ -323,17 +323,17 @@
     </div>
   <nav class="navbar" dir="rtl">
   <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
-    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <svg class="hamburger-icon" width="24" height="24" viewbox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
-    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
-      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <svg class="close-icon" width="24" height="24" viewbox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
   </button>
 
-  <button class="phone-header-btn" data-phone aria-label="Call">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+  <button class="phone-header-btn" data-phone="" aria-label="Call">
+    <svg width="20" height="20" viewbox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
     </svg>
   </button>
 
@@ -347,8 +347,8 @@
     <li class="menu-item-has-children zappy-products-dropdown">
       <a href="/products">
         מוצרים
-        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 9l6 6 6-6"/>
+        <svg class="dropdown-arrow" width="12" height="12" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"></path>
         </svg>
       </a>
       <ul class="sub-menu" id="zappy-nav-category-links">
@@ -379,8 +379,8 @@
     </nav>
   <main class="page-container ecommerce-page">
     
-        <section class="products-section" id="temp-section-1774382473755">
-          <h1>המוצרים שלנו</h1>
+        <section class="products-section">
+          <h1 id="products-page-title">המוצרים שלנו</h1>
           <div class="products-toolbar" id="products-toolbar" style="display:none;">
             <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" style="display:none;" aria-label="סינון">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h4"/></svg>
@@ -413,42 +413,6 @@
             </div>
           </div>
         </section>
-
-<section id="layout-1774382858869" class="layout-section" data-zappy-component="true" style="width: 100%; padding: 60px 0; direction: rtl;" data-component-id="imagecard-3col">
-  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
-  <h2 style="font-size: 32px; font-weight: 700; color: #1F2937; margin-bottom: 40px; text-align: center; font-family: system-ui, -apple-system, sans-serif;">כותרת שלך כאן</h2>
-  <div class="image-card-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
-    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-      <img data-placeholder="layout-image-1774382858869-lghi304jz" data-context="תיאור תמונה 1" data-zappy-editable-image="true" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232563EB;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%232563EB20;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grad)'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='18' fill='white' text-anchor='middle' dy='.3em' font-weight='500'%3E%D7%AA%D7%99%D7%90%D7%95%D7%A8%20%D7%AA%D7%9E%D7%95%D7%A0%D7%94%201%3C/text%3E%3C/svg%3E" alt="תיאור תמונה 1" style="width: 100%; height: auto; display: block; border-radius: 8px; object-fit: cover;" class="layout-placeholder-image">
-      <div style="padding: 24px;">
-        <h3 style="font-size: 20px; font-weight: 600; color: #1F2937; margin-bottom: 10px; font-family: system-ui, -apple-system, sans-serif;">כותרת כרטיס 1</h3>
-        <p style="font-size: 15px; line-height: 1.6; color: #1F2937; opacity: 0.8; font-family: system-ui, -apple-system, sans-serif;">טקסט תיאור כרטיס נמצא כאן</p>
-      </div>
-    </div>
-    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-      <img data-placeholder="layout-image-1774382858869-slgt5fs0q" data-context="תיאור תמונה 2" data-zappy-editable-image="true" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232563EB;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%232563EB20;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grad)'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='18' fill='white' text-anchor='middle' dy='.3em' font-weight='500'%3E%D7%AA%D7%99%D7%90%D7%95%D7%A8%20%D7%AA%D7%9E%D7%95%D7%A0%D7%94%202%3C/text%3E%3C/svg%3E" alt="תיאור תמונה 2" style="width: 100%; height: auto; display: block; border-radius: 8px; object-fit: cover;" class="layout-placeholder-image">
-      <div style="padding: 24px;">
-        <h3 style="font-size: 20px; font-weight: 600; color: #1F2937; margin-bottom: 10px; font-family: system-ui, -apple-system, sans-serif;">כותרת כרטיס 2</h3>
-        <p style="font-size: 15px; line-height: 1.6; color: #1F2937; opacity: 0.8; font-family: system-ui, -apple-system, sans-serif;">טקסט תיאור כרטיס נמצא כאן</p>
-      </div>
-    </div>
-    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-      <img data-placeholder="layout-image-1774382858869-r3qz71puf" data-context="תיאור תמונה 3" data-zappy-editable-image="true" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%232563EB;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%232563EB20;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grad)'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='18' fill='white' text-anchor='middle' dy='.3em' font-weight='500'%3E%D7%AA%D7%99%D7%90%D7%95%D7%A8%20%D7%AA%D7%9E%D7%95%D7%A0%D7%94%203%3C/text%3E%3C/svg%3E" alt="תיאור תמונה 3" style="width: 100%; height: auto; display: block; border-radius: 8px; object-fit: cover;" class="layout-placeholder-image">
-      <div style="padding: 24px;">
-        <h3 style="font-size: 20px; font-weight: 600; color: #1F2937; margin-bottom: 10px; font-family: system-ui, -apple-system, sans-serif;">כותרת כרטיס 3</h3>
-        <p style="font-size: 15px; line-height: 1.6; color: #1F2937; opacity: 0.8; font-family: system-ui, -apple-system, sans-serif;">טקסט תיאור כרטיס נמצא כאן</p>
-      </div>
-    </div>
-  </div>
-  </div>
-</section>
-
-
-
-
-
-
-
       
   </main>
   <footer class="site-footer"><div class="footer-container"><div class="footer-top"><div class="footer-col footer-brand"><a href="/" class="footer-logo-link"><img src="/assets/business-logo.webp" alt="AliFinds" class="logo"></a><p class="footer-tagline">המדריך האוצרותי שלך לקניות חכמות. מוצרים נבחרים, מחירים מנצחים, חוויה נקייה ונעימה.</p><div class="footer-social"><a href="[facebook_handle]" aria-label="Facebook" class="social-link"><i class="fab fa-facebook-f"></i></a><a href="[instagram_handle]" aria-label="Instagram" class="social-link"><i class="fab fa-instagram"></i></a><a href="[whatsapp_handle]" aria-label="WhatsApp" class="social-link"><i class="fab fa-whatsapp"></i></a></div></div><div class="footer-col"><h3 class="footer-heading">ניווט מהיר</h3><ul class="footer-links"><li><a href="/how-it-works"><i class="fas fa-chevron-left footer-link-icon"></i>איך זה עובד</a></li><li><a href="/about"><i class="fas fa-chevron-left footer-link-icon"></i>אודות AliFinds</a></li><li><a href="/contact"><i class="fas fa-chevron-left footer-link-icon"></i>צור קשר</a></li></ul></div><div class="footer-col"><h3 class="footer-heading">יצירת קשר</h3><ul class="footer-contact"><li><a href="/"><span class="contact-icon"><i class="fas fa-envelope"></i></span><span>[business_email]</span></a></li><li><a href="/"><span class="contact-icon"><i class="fas fa-phone"></i></span><span>[business_phone]</span></a></li><li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span><span>[business_address]</span></a></li></ul></div></div><div class="footer-bottom"><div class="footer-bottom-inner"><p class="footer-copyright">© 2026 AliFinds. כל הזכויות שמורות.</p><div class="footer-bottom-links"><a href="/privacy">מדיניות פרטיות</a><span class="footer-divider">|</span><a href="/terms">תנאי שימוש</a><span class="separator">|</span>
@@ -554,7 +518,6 @@
     }
   })();
   </script>
-    <div data-integration="accessibility:toolbar"></div>
 
     <script src="/script.js"></script>
 
